@@ -325,4 +325,115 @@ public class TripleConverterTest {
 //		assertEquals("Living Bird is not peer reviewed", text);
 
 	}
+	
+	@Test
+	public void testfortwoobjectgrouping() throws Exception {
+		List<Triple> triples = new ArrayList<Triple>();
+		Triple t = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/sing"),
+				NodeFactory.createURI("http://dbpedia.org/resource/jazz"));
+		Triple t1 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/sing"),
+				NodeFactory.createURI("http://dbpedia.org/resource/karaoke"));
+		triples.add(t);
+		triples.add(t1);
+		String text = converter.convert(triples);
+		System.out.println("Answer is Below");
+		System.out.println(triples + "\n-> " + text);
+		assertEquals("Albert Einstein sings both jazz and karaoke.", text);
+	}
+	
+	@Test
+	public void testformultipleobjectgrouping() throws Exception {
+		List<Triple> triples = new ArrayList<Triple>();
+		Triple t = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/play"),
+				NodeFactory.createURI("http://dbpedia.org/resource/football"));
+		Triple t1 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/play"),
+				NodeFactory.createURI("http://dbpedia.org/resource/hockey"));
+		Triple t2 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/play"),
+				NodeFactory.createURI("http://dbpedia.org/resource/cricket"));
+		triples.add(t);
+		triples.add(t1);
+		triples.add(t2);
+		String text = converter.convert(triples);
+		System.out.println("Answer is Below1");
+		System.out.println(triples + "\n-> " + text);
+		assertEquals("Albert Einstein plays football, hockey and cricket.", text);
+		
+		
+		
+	}
+	@Test
+	public void testfororderofoccurence() throws Exception {
+		List<Triple> triples = new ArrayList<Triple>();
+		Triple t = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/sing"),
+				NodeFactory.createURI("http://dbpedia.org/resource/jazz"));
+		Triple t1 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				RDF.type.asNode(),
+				NodeFactory.createURI("http://dbpedia.org/ontology/Person"));
+		triples.add(t);
+		triples.add(t1);
+		String text = converter.convert(triples);
+		System.out.println("Answer is Below");
+		System.out.println(triples + "\n-> " + text);
+		assertEquals("Albert Einstein is a person. He sings jazz.", text);
+	}
+	
+	@Test
+	public void testfordifferentpredicates() throws Exception {
+		List<Triple> triples = new ArrayList<Triple>();
+		Triple t = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/play"),
+				NodeFactory.createURI("http://dbpedia.org/resource/football"));
+		Triple t2 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/play"),
+				NodeFactory.createURI("http://dbpedia.org/resource/cricket"));
+		Triple t1 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/sing"),
+				NodeFactory.createURI("http://dbpedia.org/resource/karaoke"));
+		Triple t3 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/sing"),
+				NodeFactory.createURI("http://dbpedia.org/resource/jazz"));
+		Triple t4 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/eat"),
+				NodeFactory.createURI("http://dbpedia.org/resource/pizza"));
+		Triple t5 = Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/eat"),
+				NodeFactory.createURI("http://dbpedia.org/resource/chicken"));
+		Triple t6=Triple.create(
+				NodeFactory.createURI("http://dbpedia.org/resource/Albert_Einstein"),
+				NodeFactory.createURI("http://dbpedia.org/ontology/birthPlace"),
+				NodeFactory.createURI("http://dbpedia.org/resource/Ulm"));
+		triples.add(t);
+		triples.add(t1);
+		triples.add(t2);
+		triples.add(t3);
+		triples.add(t4);
+		triples.add(t5);
+		triples.add(t6);
+		String text = converter.convert(triples);
+		System.out.println("Answer is Below3");
+		System.out.println(triples + "\n-> " + text);
+		assertEquals("Albert Einstein's birth place is Ulm. He sings karaoke and jazz. He plays football and cricket. He eats pizza and chicken.", text);
+		
+		
+		
+	}
 }

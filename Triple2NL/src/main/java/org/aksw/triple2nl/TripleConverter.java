@@ -251,16 +251,132 @@ public class TripleConverter {
 		// convert the other triples
 		CoordinatedPhraseElement othersConjunction = nlgFactory.createCoordinatedPhrase();
 		List<SPhraseSpec> otherPhrases = convertToPhrases(otherTriples);
+		List<SPhraseSpec> otherphraseswithout_be_verb=new ArrayList<SPhraseSpec>();
+		List<DocumentElement> sentences1 = new ArrayList();
+		HashMap<NLGElement, List<SPhraseSpec>> otherphraseswithout_be_verbtemp=new HashMap<NLGElement,List<SPhraseSpec>>();
 		// we have to keep one triple with subject if we have no type triples
+		SPhraseSpec forcomparison= nlgFactory.createClause();
+		forcomparison.setVerb("be");
+		boolean flag=false;
 		if(typeTriples.isEmpty()) {
+			if(otherPhrases.size()==2) {
+				
+				if((otherPhrases.get(0).getVerb().equals(otherPhrases.get(1).getVerb()))&&(!otherPhrases.get(0).getVerb().equals(forcomparison.getVerb()))) {
+					NPPhraseSpec determiner = nlgFactory.createNounPhrase("both");
+					NPPhraseSpec firstclause = nlgFactory.createNounPhrase(otherPhrases.get(0).getObject());
+					firstclause.setDeterminer(determiner);
+					
+					CoordinatedPhraseElement temp = nlgFactory.createCoordinatedPhrase(firstclause, otherPhrases.get(1).getObject());
+					SPhraseSpec combinedsentence= nlgFactory.createClause();
+					combinedsentence.setSubject(otherPhrases.get(0).getSubject());
+					combinedsentence.setVerb(otherPhrases.get(0).getVerb());
+					combinedsentence.setObject(temp);
+					othersConjunction.addCoordinate(combinedsentence);
+					otherPhrases.clear();
+					
+				}else {
+					othersConjunction.addCoordinate(otherPhrases.remove(0));
+				}
+				
+			}else {
+				otherphraseswithout_be_verb=otherPhrases.stream().filter(t -> !t.getVerb().equals(forcomparison.getVerb())).collect(Collectors.toList());
+				List<NLGElement> verbs=new ArrayList<NLGElement>();
+				
+				for(SPhraseSpec s:otherphraseswithout_be_verb) {
+					verbs.add(s.getVerb());
+				}
+				Set<String> uniques = new HashSet<String>();
+				Set<NLGElement> duplicateverbs=new HashSet<NLGElement>();
+				Set<String> duplicateverbstemp=new HashSet<String>();
+				for(NLGElement p:verbs) {
+					if(!uniques.add(p.toString())) {
+						if(!duplicateverbstemp.contains(p.toString())) {
+						duplicateverbstemp.add(p.toString());
+						duplicateverbs.add(p);
+						}
+					}
+				}
+				for(NLGElement p:duplicateverbs) {
+					otherphraseswithout_be_verbtemp.put(p, new ArrayList<SPhraseSpec>());
+				}
+				
+				for(NLGElement p:duplicateverbs) {
+				for(SPhraseSpec s:otherphraseswithout_be_verb) {
+					if(p.equals(s.getVerb())) {
+					otherphraseswithout_be_verbtemp.get(p).add(s);
+					}
+				}
+				}
+				List<SPhraseSpec> temp=new ArrayList<SPhraseSpec>();
+				for(NLGElement p:duplicateverbs) {
+					for(SPhraseSpec s:otherphraseswithout_be_verbtemp.get(p)) {
+						temp.add(s);
+					}
+					
+				}
+				
+				//otherphraseswithout_be_verb=ListUtils.subtract(otherphraseswithout_be_verb,otherphraseswithout_be_verbtemp);
+				//otherphraseswithout_be_verb=ListUtils.subtract(otherphraseswithout_be_verb,temp);
+				otherPhrases=ListUtils.subtract(otherPhrases, temp);
+			if(!otherPhrases.isEmpty())	{
+				flag=true;
 			othersConjunction.addCoordinate(otherPhrases.remove(0));
+			}
+			}
 		}
 		// make subject pronominal, i.e. -> he/she/it
+		if(!otherPhrases.isEmpty()) {
 		otherPhrases.stream().forEach(p -> asPronoun(p.getSubject()));
 		for (SPhraseSpec phrase : otherPhrases) {
 			othersConjunction.addCoordinate(phrase);
 		}
-
+		for(NLGElement pi:otherphraseswithout_be_verbtemp.keySet()) {
+		CoordinatedPhraseElement joiningsubparts = nlgFactory.createCoordinatedPhrase();
+		if(!otherphraseswithout_be_verbtemp.get(pi).isEmpty()) {
+			otherphraseswithout_be_verbtemp.get(pi).stream().forEach(p -> asPronoun(p.getSubject()));
+			
+			for (SPhraseSpec phrase : otherphraseswithout_be_verbtemp.get(pi)) {
+				joiningsubparts.addCoordinate(phrase.getObject());
+			}
+		}
+		if(!otherphraseswithout_be_verbtemp.get(pi).isEmpty()) {
+			SPhraseSpec sentenceclause= nlgFactory.createClause();
+			sentenceclause.setSubject(otherphraseswithout_be_verbtemp.get(pi).get(0).getSubject());
+			sentenceclause.setVerb(otherphraseswithout_be_verbtemp.get(pi).get(0).getVerb());
+			sentenceclause.setObject(joiningsubparts);
+			othersConjunction.addCoordinate(sentenceclause);
+		}
+		}
+		
+		
+		
+		}else {
+			int i=0;
+			for(NLGElement pi:otherphraseswithout_be_verbtemp.keySet()) {
+				i++;
+				CoordinatedPhraseElement othersConjunctiontemp = nlgFactory.createCoordinatedPhrase();
+			CoordinatedPhraseElement joiningsubparts = nlgFactory.createCoordinatedPhrase();
+			if(!otherphraseswithout_be_verbtemp.get(pi).isEmpty()) {
+				if(flag) {
+					otherphraseswithout_be_verbtemp.get(pi).stream().forEach(p -> asPronoun(p.getSubject()));
+				}
+				
+				for (SPhraseSpec phrase : otherphraseswithout_be_verbtemp.get(pi)) {
+					joiningsubparts.addCoordinate(phrase.getObject());
+				}
+				SPhraseSpec sentenceclause= nlgFactory.createClause();
+				sentenceclause.setSubject(otherphraseswithout_be_verbtemp.get(pi).get(0).getSubject());
+				sentenceclause.setVerb(otherphraseswithout_be_verbtemp.get(pi).get(0).getVerb());
+				sentenceclause.setObject(joiningsubparts);
+				othersConjunctiontemp.addCoordinate(sentenceclause);
+				sentences1.add(nlgFactory.createSentence(othersConjunctiontemp));
+			}
+			if(i!=0) {
+				flag=true;
+			}
+			
+			}
+		}
 		List<DocumentElement> sentences = new ArrayList();
 		if(!typeTriples.isEmpty()) {
 			sentences.add(nlgFactory.createSentence(typesConjunction));
@@ -268,6 +384,12 @@ public class TripleConverter {
 
 		if(!otherTriples.isEmpty()) {
 			sentences.add(nlgFactory.createSentence(othersConjunction));
+		}
+		
+		if(!sentences1.isEmpty()) {
+			for(DocumentElement e: sentences1) {
+				sentences.add(e);
+			}
 		}
 
 		DocumentElement paragraph = nlgFactory.createParagraph(sentences);
