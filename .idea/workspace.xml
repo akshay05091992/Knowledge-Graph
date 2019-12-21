@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.data" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.data.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.script" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.script" beforeDir="false" />
-    </list>
+    <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/bin/" />
     <ignored path="$PROJECT_DIR$/SPARQL2NL/target/" />
@@ -474,87 +465,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="avatar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="Triple2NL" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="Triple2NL" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="Triple2NL" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="Triple2NL" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="LD2NL_EXTENSION" type="b2602c69:ProjectViewProjectNode" />
-              <item name="LD2NL_EXTENSION" type="462c0819:PsiDirectoryNode" />
-              <item name="Triple2NL" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="triple2nl" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="ProjectPane" />
       <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
@@ -708,14 +619,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="848" extended-state="7" />
-    <editor active="true" />
     <layout>
       <window_info id="Image Layers" />
       <window_info id="Designer" />
       <window_info id="UI Designer" />
       <window_info id="Capture Tool" />
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24966443" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24966443" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Terminal" />
@@ -723,7 +633,7 @@
       <window_info anchor="bottom" id="Messages" weight="0.32960895" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32960895" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32960895" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
