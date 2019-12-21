@@ -2,9 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Triple2NL/src/test/java/org/aksw/triple2nl/TripleConverterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Triple2NL/src/test/java/org/aksw/triple2nl/TripleConverterTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/Verbalizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/Verbalizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/rules/DateLiteralFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/rules/DateLiteralFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.data.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/__MACOSX/NIHLexicon/._lexAccess2013.script" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.script" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -52,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/Verbalizer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="349" column="16" lean-forward="true" selection-start-line="349" selection-start-column="16" selection-end-line="349" selection-end-column="16" />
+            <state relative-caret-position="306">
+              <caret line="371" column="47" selection-start-line="371" selection-start-column="25" selection-end-line="371" selection-end-column="47" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#10135#10143#0" expanded="true" />
@@ -554,6 +559,9 @@
       <pane id="PackagesPane" />
     </panes>
   </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -699,7 +707,7 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
+    <frame x="-7" y="-7" width="1550" height="848" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Image Layers" />
@@ -921,8 +929,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/Verbalizer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="349" column="16" lean-forward="true" selection-start-line="349" selection-start-column="16" selection-end-line="349" selection-end-column="16" />
+        <state relative-caret-position="306">
+          <caret line="371" column="47" selection-start-line="371" selection-start-column="25" selection-end-line="371" selection-end-column="47" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#10135#10143#0" expanded="true" />
