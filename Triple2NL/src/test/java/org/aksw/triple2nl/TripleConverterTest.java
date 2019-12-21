@@ -431,7 +431,7 @@ public class TripleConverterTest {
 		String text = converter.convert(triples);
 		System.out.println("Answer is Below3");
 		System.out.println(triples + "\n-> " + text);
-		assertEquals("Albert Einstein's birth place is Ulm. He sings karaoke and jazz. He plays football and cricket. He eats pizza and chicken.", text);
+		assertEquals("Albert Einstein's birth place is Ulm. He plays football and cricket. He eats pizza and chicken. He sings karaoke and jazz.", text);
 		
 		
 		

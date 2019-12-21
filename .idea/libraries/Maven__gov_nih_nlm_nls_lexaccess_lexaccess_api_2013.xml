@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: gov.nih.nlm.nls.lexaccess:lexaccess-api:2013">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/gov/nih/nlm/nls/lexaccess/lexaccess-api/2013/lexaccess-api-2013.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/gov/nih/nlm/nls/lexaccess/lexaccess-api/2013/lexaccess-api-2013-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/gov/nih/nlm/nls/lexaccess/lexaccess-api/2013/lexaccess-api-2013-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

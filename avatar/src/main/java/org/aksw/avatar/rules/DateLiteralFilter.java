@@ -25,14 +25,17 @@ package org.aksw.avatar.rules;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import org.aksw.triple2nl.converter.LiteralConverter;
 import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.LiteralLabel;
 
@@ -72,6 +75,8 @@ public class DateLiteralFilter {
 		Set<Triple> dateTriples = new HashSet<>(triples.size());
 		for (Triple triple : triples) {
 			if(isDateDatatype(triple.getObject())){
+
+
 				dateTriples.add(triple);
 			}
 		}
@@ -89,6 +94,8 @@ public class DateLiteralFilter {
 		}
 		triples.removeAll(ommitted);
 	}
+
+
 	
 	private boolean isMoreGeneralThan(LiteralLabel lit1, LiteralLabel lit2){
 		RDFDatatype dt1 = lit1.getDatatype();

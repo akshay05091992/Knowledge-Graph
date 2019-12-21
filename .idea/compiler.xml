@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="triple2nl" />
+        <module name="sparql2nl" />
+        <module name="owl2nl" />
+        <module name="evaluation" />
+        <module name="controller" />
+        <module name="avatar" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="avatar" target="1.8" />
+      <module name="controller" target="1.8" />
+      <module name="evaluation" target="1.8" />
+      <module name="LD2NL_EXTENSION" target="1.5" />
+      <module name="owl2nl" target="1.8" />
+      <module name="sparql2nl" target="1.8" />
+      <module name="triple2nl" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

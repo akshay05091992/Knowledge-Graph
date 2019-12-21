@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.jamonapi:jamon:2.81">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jamonapi/jamon/2.81/jamon-2.81.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jamonapi/jamon/2.81/jamon-2.81-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/jamonapi/jamon/2.81/jamon-2.81-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

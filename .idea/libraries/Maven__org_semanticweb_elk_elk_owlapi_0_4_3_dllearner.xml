@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.semanticweb.elk:elk-owlapi:0.4.3-dllearner">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/semanticweb/elk/elk-owlapi/0.4.3-dllearner/elk-owlapi-0.4.3-dllearner.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/semanticweb/elk/elk-owlapi/0.4.3-dllearner/elk-owlapi-0.4.3-dllearner-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/semanticweb/elk/elk-owlapi/0.4.3-dllearner/elk-owlapi-0.4.3-dllearner-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

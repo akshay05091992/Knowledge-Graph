@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.davidsoergel:conja:1.061">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/davidsoergel/conja/1.061/conja-1.061.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/davidsoergel/conja/1.061/conja-1.061-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/davidsoergel/conja/1.061/conja-1.061-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

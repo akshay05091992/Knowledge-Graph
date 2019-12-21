@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: edu.berkeley.compbio:jlibsvm:0.911">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/edu/berkeley/compbio/jlibsvm/0.911/jlibsvm-0.911.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/edu/berkeley/compbio/jlibsvm/0.911/jlibsvm-0.911-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/edu/berkeley/compbio/jlibsvm/0.911/jlibsvm-0.911-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

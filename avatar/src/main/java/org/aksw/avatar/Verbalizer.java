@@ -26,17 +26,9 @@ package org.aksw.avatar;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import joptsimple.OptionException;
@@ -64,6 +56,10 @@ import org.aksw.jena_sparql_api.cache.h2.CacheUtilsH2;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.sparql2nl.naturallanguagegeneration.SimpleNLGwithPostprocessing;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.log4j.Logger;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.dllearner.utilities.MapUtils;
@@ -101,6 +97,14 @@ import org.apache.jena.vocabulary.RDF;
  * @author ngonga
  */
 public class Verbalizer {
+
+    private static final List<XSDDatatype> dateTypes = Lists.newArrayList(
+            XSDDatatype.XSDdateTime,
+            XSDDatatype.XSDdate,
+            XSDDatatype.XSDgYearMonth,
+            XSDDatatype.XSDgYear,
+            XSDDatatype.XSDgMonth,
+            XSDDatatype.XSDgMonthDay);
 	
 	private static final Logger logger = Logger.getLogger(Verbalizer.class.getName());
 
@@ -250,6 +254,38 @@ public class Verbalizer {
      * @param resource Resource to summarize
      * @return List of NLGElement
      */
+    public org.apache.jena.graph.Node setDateFormat(org.apache.jena.graph.Node s){
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date=s.toString();
+        String[] valuesInQuotes = StringUtils.substringsBetween(date , "\"", "\"");
+        Date d2=new Date();
+        try {
+            d2=sdf.parse(valuesInQuotes[0]);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
+        String dater="";
+        try {
+            dater = sdf.format(d2);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
+        org.apache.jena.graph.Node parseddate= NodeFactory.createLiteral(dater, XSDDatatype.XSDdate);
+        return parseddate;
+    }
+
+    private boolean isDateDatatype(org.apache.jena.graph.Node node){
+        if(node.isLiteral()){
+            LiteralLabel literal = node.getLiteral();
+
+            if(literal.getDatatype() != null && dateTypes.contains(literal.getDatatype())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<NLGElement> generateSentencesFromClusters(List<Set<Node>> clusters,
             Resource resource, OWLClass namedClass, boolean replaceSubjects) {
         List<SPhraseSpec> buffer;
@@ -272,6 +308,19 @@ public class Verbalizer {
                 triples = getTriples(resource, ResourceFactory.createProperty(property.label), property.outgoing);
                 litFilter.filter(triples);
                 dateFilter.filter(triples);
+                Triple array[]=new Triple[triples.size()];
+                int k = 0;
+                for (Triple i: triples)
+                    array[k++] = i;
+                for(int i=0;i<array.length;i++){
+                    if(isDateDatatype(array[i].getObject())) {
+                        org.apache.jena.graph.Node node = setDateFormat(array[i].getObject());
+                        Triple t1 = Triple.create(array[i].getSubject(), array[i].getPredicate(), node);
+                        System.out.println(t1);
+                        array[i]=t1;
+                    }
+                }
+                triples=new HashSet<Triple>(Arrays.asList(array));
                 //restrict the number of shown values for the same property
                 boolean subsetShown = false;
                 if (triples.size() > maxShownValuesPerProperty) {

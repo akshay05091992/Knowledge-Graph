@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LD2NL_EXTENSION.iml" filepath="$PROJECT_DIR$/LD2NL_EXTENSION.iml" />
+      <module fileurl="file://$PROJECT_DIR$/avatar/avatar.iml" filepath="$PROJECT_DIR$/avatar/avatar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/controller/controller.iml" filepath="$PROJECT_DIR$/controller/controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/evaluation/evaluation.iml" filepath="$PROJECT_DIR$/evaluation/evaluation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/owl2nl/owl2nl.iml" filepath="$PROJECT_DIR$/owl2nl/owl2nl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SPARQL2NL/sparql2nl.iml" filepath="$PROJECT_DIR$/SPARQL2NL/sparql2nl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Triple2NL/triple2nl.iml" filepath="$PROJECT_DIR$/Triple2NL/triple2nl.iml" />
+    </modules>
+  </component>
+</project>

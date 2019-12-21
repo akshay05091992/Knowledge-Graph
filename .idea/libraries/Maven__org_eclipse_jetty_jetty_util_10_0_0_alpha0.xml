@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse.jetty:jetty-util:10.0.0-alpha0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/10.0.0-alpha0/jetty-util-10.0.0-alpha0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/10.0.0-alpha0/jetty-util-10.0.0-alpha0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/10.0.0-alpha0/jetty-util-10.0.0-alpha0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
