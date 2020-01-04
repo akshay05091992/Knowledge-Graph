@@ -2,6 +2,7 @@ package resttest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+
 import javax.ws.rs.Produces;
 import java.awt.*;
 import javax.ws.rs.QueryParam;
@@ -10,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.aksw.avatar.Verbalizer;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.junit.Test;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -17,7 +19,9 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
-@Path("verbalizer")
+
+
+@Path("resource1")
 public class Resource1 {
 
     //set up the SPARQL endpoint, in our case it's DBpedia
@@ -25,14 +29,12 @@ public class Resource1 {
 
     //create the verbalizer used to generate the textual summarization
     private static final Verbalizer verbalizer = new Verbalizer(endpoint, "cache", null);
-    
-    @Path("/test")
+    /*
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
     public String testing(){
     	return "hello world";
     }
-    
+    */
     @Path("/getinfo")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -49,6 +51,7 @@ public class Resource1 {
         return summary;
 
     }
+    
 
 
 }
