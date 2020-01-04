@@ -64,7 +64,7 @@ public class SimpleNLGTest {
 	}
 	
 
-	@Test
+	//@Test
 	public void testDefaultLexicon() {
 		String cls = "airport";
 		NLGElement word = nlgFactory.createWord(cls, LexicalCategory.NOUN);
@@ -83,7 +83,7 @@ public class SimpleNLGTest {
 		System.out.println(nounPhrase.getRealisation());
 	}
 	
-	@Test
+	//@Test
 	public void testNIHLexicon() {
 		String cls = "airport";
 		Lexicon lexicon = new NIHDBLexicon("../SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data");
@@ -96,7 +96,7 @@ public class SimpleNLGTest {
 		System.out.println(nounPhrase.getRealisation());
 	}
 	
-	@Test
+	//@Test
 	public void testRelativeClause(){
 		SPhraseSpec cl1 = nlgFactory.createClause(null, "have", "system of government Republic");
 		NPPhraseSpec np1 = nlgFactory.createNounPhrase("states");
@@ -122,7 +122,7 @@ public class SimpleNLGTest {
         System.out.println(realiser.realise(np));
 	}
 	
-	@Test
+	//@Test
 	public void testPossessive() throws Exception {
 		NPPhraseSpec sisterNP = nlgFactory.createNounPhrase("sister");
 		NLGElement word = nlgFactory.createWord("Albert Einstein", LexicalCategory.NOUN);

@@ -48,7 +48,7 @@ import simplenlg.realiser.english.Realiser;
 
 public class SPARQL2NLTest {
 	
-	@Test
+	//@Test
 	public void testSPARQL2NL() throws Exception {
 		Lexicon lexicon = new NIHDBLexicon("../SPARQL2NL/src/main/resources/NIHLexicon/lexAccess2013.data");
 		SparqlEndpoint endpoint = SparqlEndpoint.getEndpointDBpedia();

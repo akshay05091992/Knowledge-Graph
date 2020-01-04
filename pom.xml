@@ -8,6 +8,7 @@
 
 	<modules>
 		<!-- <module>assess</module> -->
+		<module>resttest</module>
 		<module>avatar</module>
 		<module>SPARQL2NL</module>
 		<module>Triple2NL</module>
