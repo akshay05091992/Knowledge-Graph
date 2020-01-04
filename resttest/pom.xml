@@ -9,7 +9,7 @@
     <artifactId>LD2NL</artifactId>
     <version>0.2.0-SNAPSHOT</version>
   </parent>
-  <artifactId>resttest1</artifactId>
+  <artifactId>resttest</artifactId>
   <version>0.2.0-SNAPSHOT</version>
   <description>Entity Summarization</description>
 
