@@ -440,6 +440,7 @@ public class Verbalizer {
     public List<SPhraseSpec> getPhraseSpecsFromTriples(Set<Triple> triples, boolean outgoing) {
         List<SPhraseSpec> phrases = new ArrayList<SPhraseSpec>();
         SPhraseSpec phrase;
+        
         for (Triple t : triples) {
             phrase = generateSimplePhraseFromTriple(t, outgoing);
 			phrases.add(phrase);
@@ -488,6 +489,10 @@ public class Verbalizer {
      */
     public SPhraseSpec generateSimplePhraseFromTriple(Triple triple) {
         return nlg.getNLForTriple(triple);
+    }
+    
+    public String generateSentenceFromTriples(Set<Triple> triples,boolean outgoing) {
+    	return nlg.getSentencefortriples(triples,outgoing);
     }
     
     /**

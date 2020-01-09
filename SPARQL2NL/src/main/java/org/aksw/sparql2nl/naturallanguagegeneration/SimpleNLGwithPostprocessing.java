@@ -979,6 +979,10 @@ public class SimpleNLGwithPostprocessing implements Sparql2NLConverter {
         SPhraseSpec p = tripleConverter.convertToPhrase(t, false, !outgoing);
         return p;
     }
+    
+    public String getSentencefortriples(Set<Triple> t,boolean outgoing) {
+    	return tripleConverter.convert(new ArrayList<Triple>(t));
+    }
 
     private Set<String> getVars(List<Element> elements, Set<String> projectionVars) {
         Set<String> result = new HashSet<>();
