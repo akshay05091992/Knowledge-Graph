@@ -108,7 +108,7 @@ public class Verbalizer {
 	
 	private static final Logger logger = Logger.getLogger(Verbalizer.class.getName());
 
-	private static final double DEFAULT_THRESHOLD = 0.4;
+	private static final double DEFAULT_THRESHOLD = 0.3;
 	private static final Cooccurrence DEFAULT_COOCCURRENCE_TYPE = Cooccurrence.PROPERTIES;
 	private static final HardeningType DEFAULT_HARDENING_TYPE = HardeningType.SMALLEST;
 
@@ -301,10 +301,12 @@ public class Verbalizer {
         DateLiteralFilter dateFilter = new DateLiteralFilter();
 //      
         for (Set<Node> propertySet : clusters) {
+        	
             //add up all triples for the given set of properties
             Set<Triple> triples = new HashSet<Triple>();
             buffer = new ArrayList<SPhraseSpec>();
             for (Node property : propertySet) {
+            	
                 triples = getTriples(resource, ResourceFactory.createProperty(property.label), property.outgoing);
                 litFilter.filter(triples);
                 dateFilter.filter(triples);
@@ -323,10 +325,12 @@ public class Verbalizer {
                 triples=new HashSet<Triple>(Arrays.asList(array));
                 //restrict the number of shown values for the same property
                 boolean subsetShown = false;
+                //logger.info("triples size "+triples.size());
                 if (triples.size() > maxShownValuesPerProperty) {
                     triples = getSubsetToShow(triples);
                     subsetShown = true;
                 }
+                //logger.info("subset triples size "+triples.size());
                 //all share the same property, thus they can be merged
                 List<SPhraseSpec> phraseSpecs = getPhraseSpecsFromTriples(triples, property.outgoing);
 				buffer.addAll(or.apply(phraseSpecs, subsetShown));
@@ -356,12 +360,59 @@ public class Verbalizer {
     private Set<Triple> getSubsetToShow(Set<Triple> triples) {
         Set<Triple> triplesToShow = new HashSet<>(maxShownValuesPerProperty);
         for (Triple triple : sortByObjectPopularity(triples)) {
+        	//logger.info("Input triple "+triple);
             if (triplesToShow.size() < maxShownValuesPerProperty) {
                 triplesToShow.add(triple);
+                //logger.info("added triple "+triple);
+            }
+        }
+        for (Triple triple : sortByObjectProminence(triples)) {
+        	//logger.info("Input triple "+triple);
+            if (triplesToShow.size() < maxShownValuesPerProperty) {
+                triplesToShow.add(triple);
+                //logger.info("added triple "+triple);
             }
         }
 
         return triplesToShow;
+    }
+    /**
+     * Sorts the given triples by prominence of the triple objects.
+     * @param triples the triples
+     * @return a list of sorted triples
+     */
+    private List<Triple> sortByObjectProminence(Set<Triple> triples) {
+        List<Triple> orderedTriples = new ArrayList<>();
+
+        //if one of the objects is a literal we do not sort 
+        if (triples.iterator().next().getObject().isLiteral()) {
+            orderedTriples.addAll(triples);
+        } else {
+            //we get the prominence of the object
+            Map<Triple, Integer> triple2ObjectPopularity = new HashMap<>();
+            for (Triple triple : triples) {
+                if (triple.getObject().isURI()) {
+                    String query = "SELECT (COUNT(*) AS ?cnt) WHERE {<" + triple.getObject().getURI() + "> ?p <" + triple.getSubject().getURI() +">.}";
+                    QueryExecution qe = qef.createQueryExecution(query);
+                    try {
+						ResultSet rs = qe.execSelect();
+						int popularity = rs.next().getLiteral("cnt").getInt();
+						triple2ObjectPopularity.put(triple, popularity);
+						qe.close();
+					} catch (Exception e) {
+						logger.warn("Execution of SPARQL query failed: " + e.getMessage() + "\n" + query);
+					}
+                }
+            }
+            List<Entry<Triple, Integer>> sortedByValues = MapUtils.sortByValues(triple2ObjectPopularity);
+
+            for (Entry<Triple, Integer> entry : sortedByValues) {
+                Triple triple = entry.getKey();
+                orderedTriples.add(triple);
+            }
+        }
+
+        return orderedTriples;
     }
 
     /**
@@ -515,7 +566,6 @@ public class Verbalizer {
         // first get graph for nc
         try {
 			WeightedGraph wg = graphGenerator.generateGraph(nc, threshold, namespace, cooccurrence);
-
 			// then cluster the graph
 			BorderFlowX bf = new BorderFlowX(wg);
 			Set<Set<Node>> clusters = bf.cluster();
