@@ -167,10 +167,8 @@ public class DatasetBasedGraphGenerator {
     }
 
     public WeightedGraph generateGraph(OWLClass cls, double threshold, String namespace, Cooccurrence c) throws NoGraphAvailableException {
-    	
     	// check if class is empty
     	int individualsCount = reasoner.getIndividualsCount(cls);
-    	
     	if(individualsCount == 0) {
     		return null;
     	}
@@ -333,7 +331,7 @@ public class DatasetBasedGraphGenerator {
          		+ "?s a <" + cls.toStringID() + "> ."
          		+ "?p a owl:ObjectProperty . "
          		+ "?s ?p ?o ."
-         		+ "} GROUP BY ?p";
+         		+ "} LIMIT 1000";
 
         ResultSet rs = executeSelectQuery(query);
         QuerySolution qs;
@@ -350,11 +348,11 @@ public class DatasetBasedGraphGenerator {
         }
         
         query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-        		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+        		+ "SELECT ?p (COUNT(?s) AS ?cnt) WHERE {"
          		+ "?s a <" + cls.toStringID() + "> ."
          		+ " ?p a owl:DatatypeProperty . "
          		+ "?s ?p ?o ."
-         		+ "} GROUP BY ?p";
+         		+ "} LIMIT 20";
         logger.info(query);
         rs = executeSelectQuery(query);
         while (rs.hasNext()) {
