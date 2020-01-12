@@ -65,6 +65,8 @@ import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.dllearner.utilities.MapUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -116,6 +118,7 @@ public class Verbalizer {
 
     public SimpleNLGwithPostprocessing nlg;
     public static Document doc = null;
+    public static Document doc2 = null;
     SparqlEndpoint endpoint;
     String language = "en";
     protected Realiser realiser;
@@ -183,6 +186,14 @@ public class Verbalizer {
      * @param outgoing whether to get outgoing or ingoing triples
      * @return A set of triples
      */
+    public String processnodeSubject(String nodename) {
+    	String processedname="";
+    	String segments[] = nodename.split("/");
+    	processedname=segments[segments.length-1];
+    	
+    	return processedname;
+    }
+    
     public String processnode(String nodename) {
     	String processedname="";
     	String segments[] = nodename.split("/");
@@ -201,6 +212,7 @@ public class Verbalizer {
     	String corpus="";
     	try {
     	doc = Jsoup.connect("https://en.wikipedia.org/wiki/" + Subject).get();
+    	corpus = getPlainText(doc);
     	}catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -210,9 +222,67 @@ public class Verbalizer {
     	return corpus;
     }
     
+    public String getcorpusfromwikipedia2(String Subject) {
+    	String corpus="";
+    	try {
+    	doc2 = Jsoup.connect("https://en.wikipedia.org/wiki/" + Subject).get();
+    	corpus = getPlainText(doc2);
+    	}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
+    	return corpus;
+    }
+    
+    public static String getPlainText(Document doc) {
+		Elements ps = doc.select("p");
+		return ps.text();
+	}
+    
     public boolean validatetriples(String Subject, String Predicate, String Object) {
     	boolean flag=false;
+    	Elements infobox = doc.select("table[class*=infobox]");
+    	if (ListUtil.isNotEmpty(infobox)) {
+			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
+			for (Element e : infoboxRows) {
+				String line = e.text();
+				if (line.startsWith("Born") && line.contains(Object)) {
+					flag=true;
+				}
+				
+			}
     	
+			
+			
+    	}
+    	
+    	
+    	return flag;
+    }
+    
+    public boolean validatetriples2(String Subject, String Predicate, String Object) {
+    	boolean flag=false;
+    	Elements infobox = doc2.select("table[class*=infobox]");
+    	if (ListUtil.isNotEmpty(infobox)) {
+			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
+			for (Element e : infoboxRows) {
+				String line = e.text();
+				if (line.startsWith("State") && !((line.replaceAll("State", "")).isEmpty())) {
+					//System.out.println("\n"+line);
+					flag=true;
+				}
+				
+				if(line.startsWith("District") && !line.contains(Object)) {
+					flag=false;
+				}
+				
+			}
+    	
+			
+			
+    	}
     	
     	
     	return flag;
@@ -229,11 +299,23 @@ public class Verbalizer {
         	q += " LIMIT " + maxShownValuesPerProperty+1;
             QueryExecution qe = qef.createQueryExecution(q);
             ResultSet results = qe.execSelect();
+            getcorpusfromwikipedia(processnodeSubject(r.asNode().toString()));
+            validatetriples(processnode(r.asNode().toString()),"","");
             if (results.hasNext()) {
                 while (results.hasNext()) {
                     RDFNode n = results.next().get("o");
-                    
+                    if("birthDate".equals(processnode(p.asNode().toString())) && validatetriples(processnodeSubject(r.asNode().toString()),processnode(p.asNode().toString()),processnodewithdate(n.asNode().toString()))) {
                     result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+                    }else if("birthPlace".equals(processnode(p.asNode().toString())) && validatetriples(processnodeSubject(r.asNode().toString()),processnode(p.asNode().toString()),processnode(n.asNode().toString()))) {
+                    	//System.out.println(p.asNode().toString()+"\n");
+                    	getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+                    	if(validatetriples2("","",processnode(n.asNode().toString()))) {
+                    	result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+                    	}
+                    }
+                    else if(!("birthDate".equals(processnode(p.asNode().toString())) || "birthPlace".equals(processnode(p.asNode().toString())))) {
+                    	result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+                    }
                 }
             }
             qe.close();
