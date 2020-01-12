@@ -63,6 +63,8 @@ import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.log4j.Logger;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.dllearner.utilities.MapUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -108,11 +110,12 @@ public class Verbalizer {
 	
 	private static final Logger logger = Logger.getLogger(Verbalizer.class.getName());
 
-	private static final double DEFAULT_THRESHOLD = 0.3;
+	private static final double DEFAULT_THRESHOLD = 0.4;
 	private static final Cooccurrence DEFAULT_COOCCURRENCE_TYPE = Cooccurrence.PROPERTIES;
 	private static final HardeningType DEFAULT_HARDENING_TYPE = HardeningType.SMALLEST;
 
     public SimpleNLGwithPostprocessing nlg;
+    public static Document doc = null;
     SparqlEndpoint endpoint;
     String language = "en";
     protected Realiser realiser;
@@ -180,6 +183,40 @@ public class Verbalizer {
      * @param outgoing whether to get outgoing or ingoing triples
      * @return A set of triples
      */
+    public String processnode(String nodename) {
+    	String processedname="";
+    	String segments[] = nodename.split("/");
+    	processedname=segments[segments.length-1].replaceAll("_", "");
+    	
+    	return processedname;
+    }
+    public String processnodewithdate(String nodename) {
+    	String processedname="";
+    	processedname=nodename.substring(nodename.indexOf("\"")+1,nodename.lastIndexOf("\""));
+    	
+    	return processedname;
+    }
+    
+    public String getcorpusfromwikipedia(String Subject) {
+    	String corpus="";
+    	try {
+    	doc = Jsoup.connect("https://en.wikipedia.org/wiki/" + Subject).get();
+    	}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
+    	return corpus;
+    }
+    
+    public boolean validatetriples(String Subject, String Predicate, String Object) {
+    	boolean flag=false;
+    	
+    	
+    	
+    	return flag;
+    }
     public Set<Triple> getTriples(Resource r, Property p, boolean outgoing) {
         Set<Triple> result = new HashSet<Triple>();
         try {
@@ -195,6 +232,7 @@ public class Verbalizer {
             if (results.hasNext()) {
                 while (results.hasNext()) {
                     RDFNode n = results.next().get("o");
+                    
                     result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
                 }
             }

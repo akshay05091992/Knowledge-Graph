@@ -38,15 +38,15 @@ public class Resource1 {
     @Path("/getinfo")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public String getInfo(@QueryParam("Class")String classname,@QueryParam("Subject")String subject){
+    public String getInfo(@QueryParam("Subject")String subject){
 
-        OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
+        //OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
 
         //define the entity to summarize
         OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
 
         //compute summarization of the entity and verbalize it
-        String summary = verbalizer.summarize(ind, cls);
+        String summary = verbalizer.summarize(ind);
 
         return summary;
 
