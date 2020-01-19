@@ -112,7 +112,7 @@ public class Verbalizer {
 	
 	private static final Logger logger = Logger.getLogger(Verbalizer.class.getName());
 
-	private static final double DEFAULT_THRESHOLD = 0.4;
+	private static final double DEFAULT_THRESHOLD = 0.35;
 	private static final Cooccurrence DEFAULT_COOCCURRENCE_TYPE = Cooccurrence.PROPERTIES;
 	private static final HardeningType DEFAULT_HARDENING_TYPE = HardeningType.SMALLEST;
 
@@ -132,7 +132,7 @@ public class Verbalizer {
     ObjectMergeRule or;
     SubjectMergeRule sr;
     public DatasetBasedGraphGenerator graphGenerator;
-    int maxShownValuesPerProperty = 5;
+    int maxShownValuesPerProperty = 7;
     boolean omitContentInBrackets = true;
     
     public Verbalizer(QueryExecutionFactory qef, String cacheDirectory, String wordnetDirectory) {
@@ -512,7 +512,7 @@ public class Verbalizer {
             Map<Triple, Integer> triple2ObjectPopularity = new HashMap<>();
             for (Triple triple : triples) {
                 if (triple.getObject().isURI()) {
-                    String query = "SELECT (COUNT(*) AS ?cnt) WHERE {<" + triple.getObject().getURI() + "> ?p <" + triple.getSubject().getURI() +">.}";
+                    String query = "SELECT (COUNT(*) AS ?cnt) WHERE {<" + triple.getObject().getURI() + "> <" + triple.getPredicate().getURI() +"> ?o.}";
                     QueryExecution qe = qef.createQueryExecution(query);
                     try {
 						ResultSet rs = qe.execSelect();

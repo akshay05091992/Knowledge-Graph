@@ -331,7 +331,7 @@ public class DatasetBasedGraphGenerator {
          		+ "?s a <" + cls.toStringID() + "> ."
          		+ "?p a owl:ObjectProperty . "
          		+ "?s ?p ?o ."
-         		+ "} LIMIT 1000";
+         		+ "} LIMIT 5000";
 
         ResultSet rs = executeSelectQuery(query);
         QuerySolution qs;
@@ -352,7 +352,7 @@ public class DatasetBasedGraphGenerator {
          		+ "?s a <" + cls.toStringID() + "> ."
          		+ " ?p a owl:DatatypeProperty . "
          		+ "?s ?p ?o ."
-         		+ "} LIMIT 20";
+         		+ "} LIMIT 50";
         logger.info(query);
         rs = executeSelectQuery(query);
         while (rs.hasNext()) {

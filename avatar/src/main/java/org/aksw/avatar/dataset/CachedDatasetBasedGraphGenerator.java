@@ -79,7 +79,7 @@ public class CachedDatasetBasedGraphGenerator extends DatasetBasedGraphGenerator
 	public File graphsSubFolder = new File("graphs");
 	
 	private final HashFunction hf = Hashing.md5();
-	private boolean useCache = true;
+	private boolean useCache = false;
 
 	/**
 	 * @param endpoint
