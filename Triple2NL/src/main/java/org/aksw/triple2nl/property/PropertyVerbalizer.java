@@ -396,7 +396,7 @@ public class PropertyVerbalizer {
 	
 	private void computeExpandedVerbalization(PropertyVerbalization propertyVerbalization){
 		
-		String text = propertyVerbalization.getVerbalizationText();
+		String text = propertyVerbalization.getProperty();
 		String expandedForm = text;
 		
 		// get POS tag of property verbalization
@@ -404,13 +404,22 @@ public class PropertyVerbalizer {
 		
 		// VBN IN
 		if(pos.equals("VBN IN")){
-			expandedForm = "is" + " " + text;
+			if(getIsAlive()){
+				expandedForm = "is" + " " + text;
+			}else{
+				expandedForm = "is" + " " + text;
+			}
+			
 		} else if(pos.startsWith("BE DET")) {
 			String[] split = text.split(" ");
 			expandedForm = "is" + " a " + Joiner.on(" ").join(Arrays.copyOfRange(text.split(" "), 1, split.length));
 		}
 		
 		propertyVerbalization.setExpandedVerbalizationText(expandedForm);
+	}
+	
+	private boolean getIsAlive(){
+		return true;
 	}
 	
     public static void main(String args[]) throws Exception{
