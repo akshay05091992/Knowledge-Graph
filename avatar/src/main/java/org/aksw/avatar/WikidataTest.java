@@ -17,9 +17,12 @@ import org.openrdf.repository.sparql.SPARQLRepository;
 import org.aksw.triple2nl.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.jena.graph.Triple;
+import org.joda.time.DateTime;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.NodeFactory;
 
 public class WikidataTest {
@@ -31,30 +34,38 @@ public class WikidataTest {
 		List<Triple> triples = new ArrayList<Triple>();
 		sparqlRepository.initialize();
 		ValueFactory vf = new ValueFactoryImpl();
-		String predicateIdentifier="P22";
-		String objectIdentifier = "Q1339";
-		String subject="";
-		String predicate=orchestrator(new WikidataTest().findlabels(vf.createLiteral(predicateIdentifier)));
-		String object=orchestrator(new WikidataTest().findlabels(vf.createLiteral(objectIdentifier)));
+		//String subjectIdentifier="Q615";Q9488
+		String subjectIdentifier="Q9488";
+		String predicateIdentifier="";
+		String objectIdentifier="";
+		String subject=orchestrator(new WikidataTest().findlabels(vf.createLiteral(subjectIdentifier)));
+		String predicate="";
+		String object="";
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
-
-		String query = "SELECT ?child ?childLabel WHERE {"
-		        + "?child wdt:"+predicateIdentifier+" wd:"+objectIdentifier+"."
-		        + " SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE]\".}}";
+		
+		String query = "SELECT ?Predicate ?Object  WHERE {"
+		        + "wd:"+subjectIdentifier+"?Predicate ?Object ."
+		        + "}";
 
 		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
-		    //System.out.println(new WikidataTest().findlabels(bs.getValue("childLabel")));
-			subject=orchestrator(new WikidataTest().findlabels(bs.getValue("childLabel")));
-			triples.add(Triple.create(NodeFactory.createURI(subject), NodeFactory.createURI(predicate), NodeFactory.createURI(object)));
+			if(bs.getValue("Predicate").toString().contains("http://www.wikidata.org/prop/direct/") && (bs.getValue("Object").toString().contains("http://www.wikidata.org/entity/")||bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>"))) {
+				
+				predicate=orchestrator(new WikidataTest().findlabels(bs.getValue("Predicate")));
+				if(bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>")) {
+					object=bs.getValue("Object").toString().split("T")[0].replace("\"", "");
+					triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object,XSDDatatype.XSDdate)));
+				}else {
+				object=orchestrator(new WikidataTest().findlabels(bs.getValue("Object")));
+				triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object)));
+				}
+				
+				
+			}
+			
 		}
 		
 		System.out.println(triples.toString());
-		//String text = converter.convert(triples);
-		//System.out.println(text);
-		//System.out.println(orchestrator(new WikidataTest().findlabels(vf.createLiteral("Q1339"))));
-		
-		//tupleQuery.evaluate(new SPARQLResultsXMLWriter(System.out));
 	}
 	
 	public static String orchestrator(String literal) {
@@ -69,13 +80,10 @@ public class WikidataTest {
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
 		sparqlRepository.initialize();
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
-		String val=value.toString().replaceAll("\"", "");
-		//System.out.println(val);
+		String val=value.toString().replaceAll("\"", "").replace("http://www.wikidata.org/prop/direct/", "").replace("http://www.wikidata.org/entity/", "").replaceAll("\"", "");
 		String query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX wd: <http://www.wikidata.org/entity/> select  * where {"
 		        + "wd:"+val+" rdfs:label ?label ."
 		        + " FILTER (langMatches( lang(?label), \"EN\" ) ) } LIMIT 1";
-		
-		//System.out.println(query);
 
 		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
