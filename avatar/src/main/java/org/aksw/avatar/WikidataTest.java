@@ -16,6 +16,9 @@ import org.openrdf.repository.sparql.SPARQLRepository;
 
 import org.aksw.triple2nl.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +76,22 @@ public class WikidataTest {
 		literal=literal.replaceAll("\"", "");
 		literal=literal.replaceAll(" ", "_");
 		return literal;
+	}
+	public List readcommonpredicate() {
+		List<String> predicate=new ArrayList<String>();
+		try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/common-predicate.txt"))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		       // process the line.
+		    	predicate.add(line);
+		    }
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return predicate;
+		
 	}
 	
 	public String findlabels(Value value) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
