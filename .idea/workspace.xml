@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/WikidataTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/avatar/src/main/java/org/aksw/avatar/WikidataTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,15 +20,6 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>juni</find>
-      <find>result</find>
-      <find>allTriples</find>
-      <find>Triples are</find>
-      <find>equals</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -37,12 +29,6 @@
         <option name="importAutomatically" value="true" />
       </MavenImportingSettings>
     </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="195" />
-    <option name="y" value="145" />
-    <option name="width" value="1750" />
-    <option name="height" value="995" />
   </component>
   <component name="ProjectId" id="1biAOtzNUoDgrKjIuA6wzSWsAhI" />
   <component name="ProjectViewState">
@@ -206,7 +192,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1576925366211</updated>
-      <workItem from="1589104513768" duration="1308000" />
+      <workItem from="1589104513768" duration="1733000" />
     </task>
     <servers />
   </component>
