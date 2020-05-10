@@ -16,6 +16,9 @@ import org.openrdf.repository.sparql.SPARQLRepository;
 
 import org.aksw.triple2nl.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +37,7 @@ public class WikidataTest {
 		List<Triple> triples = new ArrayList<Triple>();
 		sparqlRepository.initialize();
 		ValueFactory vf = new ValueFactoryImpl();
-		//String subjectIdentifier="Q615";Q9488
+		//String subjectIdentifier="Q615";Q9488;Q25369;Q22686
 		String subjectIdentifier="Q9488";
 		String predicateIdentifier="";
 		String objectIdentifier="";
@@ -64,8 +67,9 @@ public class WikidataTest {
 			}
 			
 		}
-		
-		System.out.println(triples.toString());
+		List<Triple> orderedTriples=new WikidataRanking().rankingTripleset(triples);
+		System.out.println(orderedTriples.toString());
+		System.out.println(orderedTriples.size());
 	}
 	
 	public static String orchestrator(String literal) {
@@ -73,6 +77,22 @@ public class WikidataTest {
 		literal=literal.replaceAll("\"", "");
 		literal=literal.replaceAll(" ", "_");
 		return literal;
+	}
+	public List readcommonpredicate() {
+		List<String> predicate=new ArrayList<String>();
+		try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/common-predicate.txt"))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		       // process the line.
+		    	predicate.add(line);
+		    }
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return predicate;
+		
 	}
 	
 	public String findlabels(Value value) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
