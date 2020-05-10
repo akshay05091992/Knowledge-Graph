@@ -331,7 +331,7 @@ public class DatasetBasedGraphGenerator {
          		+ "?s a <" + cls.toStringID() + "> ."
          		+ "?p a owl:ObjectProperty . "
          		+ "?s ?p ?o ."
-         		+ "} LIMIT 5000";
+         		+ "} LIMIT 1000";
 
         ResultSet rs = executeSelectQuery(query);
         QuerySolution qs;
@@ -350,9 +350,9 @@ public class DatasetBasedGraphGenerator {
         query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
         		+ "SELECT ?p (COUNT(?s) AS ?cnt) WHERE {"
          		+ "?s a <" + cls.toStringID() + "> ."
-         		+ " ?p a owl:DatatypeProperty . "
+         		+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} "
          		+ "?s ?p ?o ."
-         		+ "} LIMIT 50";
+         		+ "}  ORDER BY DESC(?p) LIMIT 20 ";
         logger.info(query);
         rs = executeSelectQuery(query);
         while (rs.hasNext()) {
@@ -408,7 +408,6 @@ public class DatasetBasedGraphGenerator {
         //get total number of instances for the class
         int instanceCount = getInstanceCount(cls);
         logger.info("Number of instances in class: " + instanceCount);
-
         //get all properties+frequency that are used by instances of the class
         Map<OWLObjectProperty, Integer> propertiesWithFrequency = getPropertiesWithFrequency(cls, propertyDirection);
 
@@ -419,7 +418,10 @@ public class DatasetBasedGraphGenerator {
            
             double score = frequency / (double) instanceCount;
             logger.info(property + ": " + frequency + " -> " + score);
-            if (score >= threshold) {
+            if(property.toString().contains("nationality")){
+            	properties.add(property);
+            }
+            else if (score >= threshold) {
                 properties.add(property);
             }
         }
