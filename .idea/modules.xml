@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/controller/controller.iml" filepath="$PROJECT_DIR$/controller/controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/evaluation/evaluation.iml" filepath="$PROJECT_DIR$/evaluation/evaluation.iml" />
       <module fileurl="file://$PROJECT_DIR$/owl2nl/owl2nl.iml" filepath="$PROJECT_DIR$/owl2nl/owl2nl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/resttest/resttest.iml" filepath="$PROJECT_DIR$/resttest/resttest.iml" />
       <module fileurl="file://$PROJECT_DIR$/SPARQL2NL/sparql2nl.iml" filepath="$PROJECT_DIR$/SPARQL2NL/sparql2nl.iml" />
       <module fileurl="file://$PROJECT_DIR$/Triple2NL/triple2nl.iml" filepath="$PROJECT_DIR$/Triple2NL/triple2nl.iml" />
     </modules>

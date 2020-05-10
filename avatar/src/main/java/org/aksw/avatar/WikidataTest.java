@@ -65,7 +65,7 @@ public class WikidataTest {
 			
 		}
 		
-		System.out.println(triples.toString());
+		System.out.println(triples.size());
 	}
 	
 	public static String orchestrator(String literal) {
