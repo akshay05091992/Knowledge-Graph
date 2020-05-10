@@ -10,6 +10,7 @@
         <module name="sparql2nl" />
         <module name="owl2nl" />
         <module name="evaluation" />
+        <module name="resttest" />
         <module name="controller" />
         <module name="avatar" />
       </profile>
@@ -20,6 +21,7 @@
       <module name="evaluation" target="1.8" />
       <module name="LD2NL_EXTENSION" target="1.5" />
       <module name="owl2nl" target="1.8" />
+      <module name="resttest" target="1.7" />
       <module name="sparql2nl" target="1.8" />
       <module name="triple2nl" target="1.8" />
     </bytecodeTargetLevel>

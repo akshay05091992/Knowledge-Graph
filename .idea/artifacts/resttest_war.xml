@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="resttest:war">
+    <output-path>$PROJECT_DIR$/resttest/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>resttest</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="resttest.war">
+      <element id="artifact" artifact-name="resttest:war exploded" />
+    </root>
+  </artifact>
+</component>
