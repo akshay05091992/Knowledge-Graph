@@ -173,7 +173,8 @@ public class TripleConverter {
 	public String convert(Triple t){
 		return convert(t, false);
 	}
-
+	
+	
 	/**
 	 * Return a textual representation for the given triple.
 	 *

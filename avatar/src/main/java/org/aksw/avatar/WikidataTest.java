@@ -44,6 +44,7 @@ public class WikidataTest {
 		String subject=orchestrator(new WikidataTest().findlabels(vf.createLiteral(subjectIdentifier)));
 		String predicate="";
 		String object="";
+		String NationalityIdentifier="";
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
 		
 		String query = "SELECT ?Predicate ?Object  WHERE {"
@@ -55,6 +56,9 @@ public class WikidataTest {
 			if(bs.getValue("Predicate").toString().contains("http://www.wikidata.org/prop/direct/") && (bs.getValue("Object").toString().contains("http://www.wikidata.org/entity/")||bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>"))) {
 				
 				predicate=orchestrator(new WikidataTest().findlabels(bs.getValue("Predicate")));
+				if(predicate.equals("country_of_citizenship")) {
+					NationalityIdentifier=bs.getValue("Object").toString();
+				}
 				if(bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>")) {
 					object=bs.getValue("Object").toString().split("T")[0].replace("\"", "");
 					triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object,XSDDatatype.XSDdate)));
@@ -68,8 +72,7 @@ public class WikidataTest {
 			
 		}
 		List<Triple> orderedTriples=new WikidataRanking().rankingTripleset(triples);
-		System.out.println(orderedTriples.toString());
-		System.out.println(orderedTriples.size());
+		System.out.println(new WikidataVerbalizer().Verbalize(orderedTriples,NationalityIdentifier));
 	}
 	
 	public static String orchestrator(String literal) {
