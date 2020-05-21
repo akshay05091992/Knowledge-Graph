@@ -1,9 +1,10 @@
+instance_of
+sex_or_gender
+country_of_citizenship
 date_of_death
 date_of_birth
 place_of_birth
-sex_or_gender
 occupation
-country_of_citizenship
 member_of_sports_team
 educated_at
 father
