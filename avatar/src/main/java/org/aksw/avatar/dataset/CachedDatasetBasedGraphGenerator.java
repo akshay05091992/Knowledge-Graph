@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
@@ -214,6 +215,7 @@ public class CachedDatasetBasedGraphGenerator extends DatasetBasedGraphGenerator
 	public boolean isUseCache(){
 		return useCache && graphsFolder != null;
 	}
+
 	
 	class Configuration{
 		OWLClass cls;
