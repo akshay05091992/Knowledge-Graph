@@ -63,9 +63,26 @@ public class Resource1 {
         OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
 
         //compute summarization of the entity and verbalize it
-        String summary = verbalizer.getSimilarEntities(ind);
+        String similar = verbalizer.getSimilarEntities(ind);
 
-        return summary;
+        return similar;
+
+    }
+    
+    @Path("/getThumnail")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getThumnail(@QueryParam("Subject")String subject){
+
+        //OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
+
+        //define the entity to summarize
+        OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
+
+        //compute summarization of the entity and verbalize it
+        String thumbnail = verbalizer.getThumbnail(ind);
+
+        return thumbnail;
 
     }
 

@@ -800,6 +800,26 @@ public class Verbalizer {
 
 		return ret;
 	}
+	
+	public String getThumbnail(OWLIndividual individual){
+		String ret = "";
+		try {
+			String q;
+			q = "SELECT ?o where { <"+individual.toStringID()+"> <http://dbpedia.org/ontology/thumbnail> ?o.}";
+			System.out.println("query"+q);
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				ret = ret + " " + node.toString();
+			}
+			qe.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
 
 	public String getIntroSentence(OWLIndividual individual, OWLClass nc) {
 		String nationality = getNationality(individual, nc);
