@@ -94,7 +94,7 @@ public class DatasetBasedGraphGenerator {
 	private String cacheDirectory;
 
 	public OWLIndividual indiv = null;
-	
+
 	public final Integer propertiesToShow = 7;
 
 	public DatasetBasedGraphGenerator(SparqlEndpoint endpoint) {
@@ -305,91 +305,76 @@ public class DatasetBasedGraphGenerator {
 	}
 
 	/**
-     * Get all properties and its frequencies based on how often each property
-     * is used by instances of the given class.
-     *
-     * @param cls
-     * @param namespace
-     * @return
-     */
-    private Map<OWLObjectProperty, Integer> getPropertiesWithFrequency(OWLClass cls, Direction propertyDirection) {
-        Map<OWLObjectProperty, Integer> properties = new HashMap<OWLObjectProperty, Integer>();
-        String query;
-        if(propertyDirection == Direction.OUTGOING){
-        	 query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-        	 		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
-             		+ "?s a <" + cls.toStringID() + ">."
-             		+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} "
-             		+ "?s ?p ?o."
-             		+ "} GROUP BY ?p";
-        } else {
-        	 query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-        	 		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
-             		+ "?s a <" + cls.toStringID() + ">."
-             		+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} "
-             		+ "?o ?p ?s."
-             		+ "} GROUP BY ?p";
-        }
-        
-        //split into 2 queries because triple stores sometimes do not answer the query above
-        query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-        		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
-         		+ "?s a <" + cls.toStringID() + "> ."
-         		+ "?p a owl:ObjectProperty . "
-         		+ "?s ?p ?o ."
-         		+ "} LIMIT 1000";
+	 * Get all properties and its frequencies based on how often each property
+	 * is used by instances of the given class.
+	 *
+	 * @param cls
+	 * @param namespace
+	 * @return
+	 */
+	private Map<OWLObjectProperty, Integer> getPropertiesWithFrequency(OWLClass cls, Direction propertyDirection) {
+		Map<OWLObjectProperty, Integer> properties = new HashMap<OWLObjectProperty, Integer>();
+		String query;
+		if (propertyDirection == Direction.OUTGOING) {
+			query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> " + "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+					+ "?s a <" + cls.toStringID() + ">."
+					+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} " + "?s ?p ?o." + "} GROUP BY ?p";
+		} else {
+			query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> " + "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+					+ "?s a <" + cls.toStringID() + ">."
+					+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} " + "?o ?p ?s." + "} GROUP BY ?p";
+		}
 
-        
-        if(this.indiv != null){
-        	
-        	query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
-        			+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} "
-        			+ "<"+this.indiv.toStringID()+"> ?p ?o.} group by ?p "
-        			+ "ORDER BY DESC(?cnt)";
-        }
-        
-        ResultSet rs = executeSelectQuery(query);
-        QuerySolution qs;
-        while (rs.hasNext()) {
-            qs = rs.next();
-            int frequency = qs.getLiteral("cnt").getInt();
-            if(frequency > 0) {
-                String uri = qs.getResource("p").getURI();
-                if (!blacklist.contains(uri)) {
-                    properties.put(new OWLObjectPropertyImpl(IRI.create(uri)), frequency);
-                }
-            }
-            
-        }
-        
-        query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
-        		+ "SELECT ?p (COUNT(?s) AS ?cnt) WHERE {"
-         		+ "?s a <" + cls.toStringID() + "> ."
-         		+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} "
-         		+ "?s ?p ?o ."
-         		+ "}  ORDER BY DESC(?p) LIMIT 20 ";
-        
-        if(this.indiv != null){
-        	
-        	query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
-        			+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} "
-        			+ "<"+this.indiv.toStringID()+"> ?p ?o.} group by ?p "
-        			+ "ORDER BY DESC(?cnt)";
-        }
-        logger.info(query);
-        rs = executeSelectQuery(query);
-        while (rs.hasNext()) {
-            qs = rs.next();
-            int frequency = qs.getLiteral("cnt").getInt();
-            if(frequency > 0) {
-	            String uri = qs.getResource("p").getURI();
-	            if (!blacklist.contains(uri)) {
-	                properties.put(new OWLObjectPropertyImpl(IRI.create(uri)), frequency);
-	            }
-            }
-        }
-        return properties;
-    }
+		// split into 2 queries because triple stores sometimes do not answer
+		// the query above
+		query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> " + "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+				+ "?s a <" + cls.toStringID() + "> ." + "?p a owl:ObjectProperty . " + "?s ?p ?o ." + "} LIMIT 1000";
+
+		if (this.indiv != null) {
+
+			query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
+					+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} " + "<" + this.indiv.toStringID()
+					+ "> ?p ?o.} group by ?p " + "ORDER BY DESC(?cnt)";
+		}
+
+		ResultSet rs = executeSelectQuery(query);
+		QuerySolution qs;
+		while (rs.hasNext()) {
+			qs = rs.next();
+			int frequency = qs.getLiteral("cnt").getInt();
+			if (frequency > 0) {
+				String uri = qs.getResource("p").getURI();
+				if (!blacklist.contains(uri)) {
+					properties.put(new OWLObjectPropertyImpl(IRI.create(uri)), frequency);
+				}
+			}
+
+		}
+
+		query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> " + "SELECT ?p (COUNT(?s) AS ?cnt) WHERE {" + "?s a <"
+				+ cls.toStringID() + "> ." + " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} "
+				+ "?s ?p ?o ." + "}  ORDER BY DESC(?p) LIMIT 20 ";
+
+		if (this.indiv != null) {
+
+			query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
+					+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} " + "<" + this.indiv.toStringID()
+					+ "> ?p ?o.} group by ?p " + "ORDER BY DESC(?cnt)";
+		}
+		logger.info(query);
+		rs = executeSelectQuery(query);
+		while (rs.hasNext()) {
+			qs = rs.next();
+			int frequency = qs.getLiteral("cnt").getInt();
+			if (frequency > 0) {
+				String uri = qs.getResource("p").getURI();
+				if (!blacklist.contains(uri)) {
+					properties.put(new OWLObjectPropertyImpl(IRI.create(uri)), frequency);
+				}
+			}
+		}
+		return properties;
+	}
 
 	private void aPriori(OWLClass cls, Set<OWLObjectProperty> properties, int minSupport) {
 		System.out.println("Candidates: " + properties);
@@ -432,8 +417,8 @@ public class DatasetBasedGraphGenerator {
 		Integer propertiesTo = 0;
 
 		// get total number of instances for the class
-		//int instanceCount = getInstanceCount(cls);
-		//logger.info("Number of instances in class: " + instanceCount);
+		// int instanceCount = getInstanceCount(cls);
+		// logger.info("Number of instances in class: " + instanceCount);
 		// get all properties+frequency that are used by instances of the class
 		Map<OWLObjectProperty, Integer> propertiesWithFrequency = getPropertiesWithFrequency(cls, propertyDirection);
 
@@ -442,8 +427,8 @@ public class DatasetBasedGraphGenerator {
 			OWLObjectProperty property = entry.getKey();
 			Integer frequency = entry.getValue();
 
-			//double score = frequency / (double) instanceCount;
-			//logger.info(property + ": " + frequency + " -> " + score);
+			// double score = frequency / (double) instanceCount;
+			// logger.info(property + ": " + frequency + " -> " + score);
 			if (property.toString().contains("nationality")) {
 				properties.add(property);
 			} else if (propertiesTo < propertiesToShow && !property.toString().contains("soundRecording")) {
@@ -452,7 +437,7 @@ public class DatasetBasedGraphGenerator {
 			}
 		}
 		logger.info("...got " + properties);
-		
+
 		return properties;
 	}
 
@@ -463,7 +448,7 @@ public class DatasetBasedGraphGenerator {
 	 * @return
 	 */
 	private int getInstanceCount(OWLClass cls) {
-		
+
 		String query = "SELECT (COUNT(?s) AS ?cnt) WHERE {?s a <" + this.indiv.toStringID() + ">.}";
 		ResultSet rs = executeSelectQuery(query);
 		return rs.next().getLiteral("cnt").getInt();
@@ -510,6 +495,7 @@ public class DatasetBasedGraphGenerator {
 		this.useIncomingProperties = useIncomingProperties;
 	}
 
+	
 	public OWLIndividual getIndiv() {
 		return this.indiv;
 	}

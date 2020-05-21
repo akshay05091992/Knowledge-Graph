@@ -780,6 +780,26 @@ public class Verbalizer {
 		summary = summary.replace(" , among others,", ", among others,");
 		return summary;
 	}
+	
+	public String getSimilarEntities(OWLIndividual individual){
+		OWLClass cls = getMostSpecificType(individual);
+		String ret = "";
+		try {
+			String q;
+			q = "SELECT ?s where {  ?s  ?o <"+cls.toStringID()+">.} LIMIT 10";
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("s");
+				ret = ret + " " + node.toString();
+			}
+			qe.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
 
 	public String getIntroSentence(OWLIndividual individual, OWLClass nc) {
 		String nationality = getNationality(individual, nc);
