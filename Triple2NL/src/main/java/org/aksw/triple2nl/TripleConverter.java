@@ -174,7 +174,22 @@ public class TripleConverter {
 		return convert(t, false);
 	}
 	
-	
+	public String getoccupation(List<Triple> input) {
+		CoordinatedPhraseElement combinedObject = nlgFactory.createCoordinatedPhrase();
+		for(Triple t:input) {
+			if(t.getPredicate().toString().equals("\"occupation\"")) {
+				System.out.println(t.getObject().toString());
+				combinedObject.addCoordinate(orchestrator(t.getObject().toString()));
+			}
+		}
+		return realiser.realiseSentence(combinedObject);
+	}
+	public static String orchestrator(String literal) {
+		literal=literal.replaceAll("@en", "");
+		literal=literal.replaceAll("\"", "");
+		literal=literal.replaceAll(" ", "_");
+		return literal;
+	}
 	/**
 	 * Return a textual representation for the given triple.
 	 *
