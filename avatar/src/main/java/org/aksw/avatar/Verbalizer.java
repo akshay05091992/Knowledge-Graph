@@ -293,7 +293,7 @@ public class Verbalizer {
 			} else {
 				q = "SELECT ?o where { ?o <" + p.getURI() + "> <" + r.getURI() + ">.}";
 			}
-			System.out.println("Query for Triple" + q);
+			
 			q += " LIMIT " + maxShownValuesPerProperty + 1;
 			QueryExecution qe = qef.createQueryExecution(q);
 			ResultSet results = qe.execSelect();
@@ -419,6 +419,7 @@ public class Verbalizer {
 		Gender g = getGender(resource);
 
 		// get a list of possible subject replacements
+		
 		List<NPPhraseSpec> subjects = generateSubjects(resource, namedClass, g);
 
 		List<NLGElement> result = new ArrayList<NLGElement>();
@@ -709,6 +710,7 @@ public class Verbalizer {
 
 		// first get graph for nc
 		try {
+			graphGenerator.setIndiv(individuals.iterator().next());
 			WeightedGraph wg = graphGenerator.generateGraph(nc, threshold, namespace, cooccurrence);
 			// then cluster the graph
 			BorderFlowX bf = new BorderFlowX(wg);
@@ -719,23 +721,22 @@ public class Verbalizer {
 
 			Map<OWLIndividual, List<NLGElement>> verbalizations = new HashMap<OWLIndividual, List<NLGElement>>();
 
-			for (OWLIndividual ind : individuals) {
-				// finally generateSentencesFromClusters
-				// generateIntroSentence(namespace,nc);
-				List<NLGElement> result = generateSentencesFromClusters(sortedPropertyClusters,
-						ResourceFactory.createResource(ind.toStringID()), nc, true);
+			
+			OWLIndividual ind = individuals.iterator().next();
+			List<NLGElement> result = generateSentencesFromClusters(sortedPropertyClusters,
+					ResourceFactory.createResource(ind.toStringID()), nc, true);
 
-				Triple t = Triple.create(ResourceFactory.createResource(ind.toStringID()).asNode(),
-						ResourceFactory.createProperty(RDF.type.getURI()).asNode(),
-						ResourceFactory.createResource(nc.toStringID()).asNode());
-				Collections.reverse(result);
-				// result.add(generateSimplePhraseFromTriple(t));
-				Collections.reverse(result);
+			Triple t = Triple.create(ResourceFactory.createResource(ind.toStringID()).asNode(),
+					ResourceFactory.createProperty(RDF.type.getURI()).asNode(),
+					ResourceFactory.createResource(nc.toStringID()).asNode());
+			Collections.reverse(result);
+			// result.add(generateSimplePhraseFromTriple(t));
+			Collections.reverse(result);
 
-				verbalizations.put(ind, result);
+			verbalizations.put(ind, result);
 
-				resource2Triples.get(ResourceFactory.createResource(ind.toStringID())).add(t);
-			}
+			resource2Triples.get(ResourceFactory.createResource(ind.toStringID())).add(t);
+			
 
 			return verbalizations;
 		} catch (NoGraphAvailableException e) {
@@ -779,13 +780,61 @@ public class Verbalizer {
 		summary = summary.replace(" , among others,", ", among others,");
 		return summary;
 	}
+	
+	public String getSimilarEntities(OWLIndividual individual){
+		OWLClass cls = getMostSpecificType(individual);
+		String ret = "";
+		try {
+			String q;
+			q = "SELECT ?s where {  ?s  ?o <"+cls.toStringID()+">.} LIMIT 10";
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("s");
+				ret = ret + " " + node.toString();
+			}
+			qe.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+	
+	public String getThumbnail(OWLIndividual individual){
+		String ret = "";
+		try {
+			String q;
+			q = "SELECT ?o where { <"+individual.toStringID()+"> <http://dbpedia.org/ontology/thumbnail> ?o.}";
+			System.out.println("query"+q);
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				ret = ret + " " + node.toString();
+			}
+			qe.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
 
 	public String getIntroSentence(OWLIndividual individual, OWLClass nc) {
 		String nationality = getNationality(individual, nc);
 		String entity = individual.toString().substring(individual.toString().lastIndexOf("/") + 1,
 				individual.toString().length() - 1).replaceAll("_"," ");
+		String article;
+		if(nationality.toLowerCase().startsWith("a") || nationality.toLowerCase().startsWith("e") || 
+				nationality.toLowerCase().startsWith("i") || nationality.toLowerCase().startsWith("o")
+				|| nationality.toLowerCase().startsWith("u")){
+			article = "an";
+		}else{
+			article = "a";
+		}
 		if (getIsAlive(individual)) {
-			return  entity + " is a " + nationality + " "
+			return  entity + " is "+article+" "+ nationality + " "
 					+ nc.toString().substring(nc.toString().lastIndexOf("/") + 1, nc.toString().length() - 1);
 		} else {
 			return entity + " was a " + nationality + " "

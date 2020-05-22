@@ -52,6 +52,41 @@ public class Resource1 {
 
     }
     
+    @Path("/getSimilar")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getSimilar(@QueryParam("Subject")String subject){
+
+        //OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
+
+        //define the entity to summarize
+        OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
+
+        //compute summarization of the entity and verbalize it
+        String similar = verbalizer.getSimilarEntities(ind);
+
+        return similar;
+
+    }
+    
+    @Path("/getThumnail")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getThumnail(@QueryParam("Subject")String subject){
+
+        //OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
+
+        //define the entity to summarize
+        OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
+
+        //compute summarization of the entity and verbalize it
+        String thumbnail = verbalizer.getThumbnail(ind);
+
+        return thumbnail;
+
+    }
+
+    
 
 
 }
