@@ -9,8 +9,9 @@ import simplenlg.realiser.english.Realiser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.aksw.avatar.gender.Gender;
+import org.aksw.triple2nl.gender.Gender;
 import org.apache.jena.graph.Triple;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
@@ -29,9 +30,11 @@ public class WikidataVerbalizer {
 	
 	public String Verbalize(List<Triple> input,String NationalityIdentifier) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
 		String text="";
-		Gender g;
+		Gender g=Gender.UNKNOWN;
 		String subject="";
 		String nationality="";
+		String occupation="";
+		boolean isalive=true;
 		List<NLGElement> result = new ArrayList<NLGElement>();
 		if(NationalityIdentifier != "") {
 			nationality=getNationality(NationalityIdentifier);
@@ -47,21 +50,34 @@ public class WikidataVerbalizer {
 				else {
 					g=Gender.UNKNOWN;
 				}
-				String occupation = new TripleConverter().getoccupation(input);
+				input.remove(0);
+				input.remove(0);
+				Map<String,List<Triple>> resultdata = new TripleConverter().getoccupation(input);
+				for ( Map.Entry<String, List<Triple>> entry : resultdata.entrySet()) {
+				    occupation = entry.getKey();
+				    input = entry.getValue();
+				    
+				}
 				
 				if(isAlive(input)) {
 					text=new WikidataTest().orchestrator(subject).replace("_", " ")+" is a "+nationality+" "+occupation;
 					
 				}else {
 					text=new WikidataTest().orchestrator(subject).replace("_", " ")+" was a "+nationality+" "+occupation;
+					isalive=false;
 				}
-				
+					
 			}
 		}
+		text+=new TripleConverter().textgeneration(input, g, isalive);
 		
-		
+		System.out.println(input.toString());
 		return text;
 	}
+	
+	
+	
+	
 	
 	
 	

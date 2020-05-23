@@ -1,6 +1,5 @@
 instance_of
 sex_or_gender
-country_of_citizenship
 date_of_death
 date_of_birth
 place_of_birth

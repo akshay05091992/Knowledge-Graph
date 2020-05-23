@@ -59,6 +59,8 @@ import org.slf4j.LoggerFactory;
 import simplenlg.features.Feature;
 import simplenlg.features.InternalFeature;
 import simplenlg.features.LexicalFeature;
+import simplenlg.features.NumberAgreement;
+import simplenlg.features.Tense;
 import simplenlg.framework.*;
 import simplenlg.lexicon.Lexicon;
 import simplenlg.phrasespec.NPPhraseSpec;
@@ -67,6 +69,9 @@ import simplenlg.realiser.english.Realiser;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataPropertyImpl;
 import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -173,21 +178,141 @@ public class TripleConverter {
 	public String convert(Triple t){
 		return convert(t, false);
 	}
-		public String getoccupation(List<Triple> input) {
+		public Map<String,List<Triple>> getoccupation(List<Triple> input) {
 			CoordinatedPhraseElement combinedObject = nlgFactory.createCoordinatedPhrase();
+			List<Triple> toberemoved=new ArrayList<Triple>();
 			for(Triple t:input) {
 				if(t.getPredicate().toString().equals("\"occupation\"")) {
-					System.out.println(t.getObject().toString());
+					toberemoved.add(t);
 					combinedObject.addCoordinate(orchestrator(t.getObject().toString()));
 				}
 			}
-			return realiser.realiseSentence(combinedObject);
+			input.removeAll(toberemoved);
+			Map<String,List<Triple>> result = new HashMap<String,List<Triple>>();
+			result.put(realiser.realiseSentence(combinedObject), input);
+			return result;
 		}
 		public static String orchestrator(String literal) {
 			literal=literal.replaceAll("@en", "");
 			literal=literal.replaceAll("\"", "");
-			literal=literal.replaceAll(" ", "_");
+			literal=literal.replaceAll("_", " ");
 			return literal;
+		}
+		
+		@SuppressWarnings("deprecation")
+		public String textgeneration(List<Triple> input, Gender g, boolean isalive) {
+			String text="";
+			List<SPhraseSpec> sentenseclause=new ArrayList<SPhraseSpec>();
+			Set<String> uniquepredicate=new HashSet<String>();
+			for(Triple t:input) {
+				SPhraseSpec sentence=nlgFactory.createClause();
+				if(g.equals(Gender.MALE)) {
+					sentence.setSubject(nlgFactory.createStringElement("His"));
+				}else if(g.equals(Gender.FEMALE)) {
+					sentence.setSubject(nlgFactory.createStringElement("Her"));
+				}else {
+					sentence.setSubject(nlgFactory.createStringElement("It"));
+				}
+				if(!uniquepredicate.contains(processpredicate(t.getPredicate().toString()))) {
+					sentence.setVerb(nlgFactory.createStringElement(processpredicate(t.getPredicate().toString())));
+					CoordinatedPhraseElement conjugatingobjects = nlgFactory.createCoordinatedPhrase();
+					if(isDate(t.getObject().toString())) {
+						String datestring=processDateLiteral(t.getObject().toString());
+						DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+						try {
+							Date date = format1.parse(datestring);
+						
+					     DateFormat format2 = new SimpleDateFormat("MMMMM dd, yyyy");
+					     String dateString = format2.format(date);
+					     NPPhraseSpec determiner;
+					     if(isalive) {
+					     determiner = nlgFactory.createNounPhrase("is");
+					     }else {
+					    	 determiner = nlgFactory.createNounPhrase("was");
+					     }
+					     NLGElement datedata=nlgFactory.createStringElement(dateString);
+					     NPPhraseSpec firstclause = nlgFactory.createNounPhrase(datedata);
+					     firstclause.setDeterminer(determiner);
+					     conjugatingobjects.addCoordinate(firstclause);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}else {
+						NPPhraseSpec determiner;
+						if(isalive) {
+						     determiner = nlgFactory.createNounPhrase("is");
+						     }else {
+						    	 determiner = nlgFactory.createNounPhrase("was");
+						     }
+						NLGElement data=nlgFactory.createStringElement(processobject(t.getObject().toString()));
+					     NPPhraseSpec firstclause = nlgFactory.createNounPhrase(data);
+					     firstclause.setDeterminer(determiner);
+						conjugatingobjects.addCoordinate(firstclause);
+						
+					}
+					sentence.setFeature(Feature.NUMBER,NumberAgreement.SINGULAR);
+					conjugatingobjects.setFeature(Feature.RAISE_SPECIFIER, Boolean.FALSE);
+					if(isalive) {
+					conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "is");
+					}else {
+						conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "was");
+					}
+					sentence.setFeature(Feature.RAISE_SPECIFIER, Boolean.FALSE);
+					sentence.setFeature(Feature.TENSE,Tense.PRESENT);
+					sentence.setObject(conjugatingobjects);
+					sentenseclause.add(sentence);
+					uniquepredicate.add(processpredicate(t.getPredicate().toString()));
+				}else {
+					SPhraseSpec sentencealreadypresent=sentenseclause.get(sentenseclause.size() - 1);
+					CoordinatedPhraseElement conjugatingobjects=(CoordinatedPhraseElement) sentencealreadypresent.getObject();
+					NLGElement data=nlgFactory.createStringElement(processobject(t.getObject().toString()));
+					conjugatingobjects.addCoordinate(data);
+					SPhraseSpec sentencenew=nlgFactory.createClause();
+					sentencenew.setFeature(Feature.NUMBER,NumberAgreement.PLURAL);
+					sentencenew.setFeature(Feature.RAISE_SPECIFIER, Boolean.TRUE);
+					sentencenew.setFeature(Feature.TENSE, Tense.PRESENT);
+					sentencenew.setSubject(sentencealreadypresent.getSubject());
+					sentencenew.setVerb(sentencealreadypresent.getVerb());
+					conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "are");
+					conjugatingobjects.setFeature(Feature.RAISE_SPECIFIER, Boolean.TRUE);
+					sentencenew.setObject(conjugatingobjects);
+					sentenseclause.set(sentenseclause.size() - 1, sentencenew);
+				}
+			}
+			
+			for(SPhraseSpec s:sentenseclause) {
+				System.out.println(realiser.realiseSentence(s));
+				text+=realiser.realiseSentence(s);
+			}
+			
+			
+			return text;
+			
+		}
+		
+		public String processobject(String input) {
+			
+			return input.replaceAll("\"", "").replace("_", " ");
+		}
+		
+		public String processDateLiteral(String input) {
+			
+			return input.replaceAll("^^http://www.w3.org/2001/XMLSchema#date", "").replaceAll("\"", "");
+		}
+		
+		public boolean isDate(String input) {
+			boolean flag=false;
+			if(input.contains("http://www.w3.org/2001/XMLSchema#date")) {
+				flag=true;
+			}
+			
+			return flag;
+		}
+		
+		public String processpredicate(String Predicate) {
+			return Predicate.replaceAll("_", " ").replaceAll("\"", "").replace("@", "");
 		}
 	/**
 	 * Return a textual representation for the given triple.
