@@ -37,8 +37,8 @@ public class WikidataTest {
 		List<Triple> triples = new ArrayList<Triple>();
 		sparqlRepository.initialize();
 		ValueFactory vf = new ValueFactoryImpl();
-		//String subjectIdentifier="Q615";Q9488;Q25369;Q22686
-		String subjectIdentifier="Q22686";
+		//String subjectIdentifier="Q615";Q9488;Q25369;Q22686;Q937
+		String subjectIdentifier="Q25369";
 		String predicateIdentifier="";
 		String objectIdentifier="";
 		String subject=orchestrator(new WikidataTest().findlabels(vf.createLiteral(subjectIdentifier)));

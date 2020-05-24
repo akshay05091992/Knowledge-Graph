@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="05a98f35-5c72-4e57-aea8-9c1ade88883c" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -213,7 +211,7 @@
       <workItem from="1590143769860" duration="1405000" />
       <workItem from="1590166071367" duration="3559000" />
       <workItem from="1590308000424" duration="256000" />
-      <workItem from="1590346678203" duration="1309000" />
+      <workItem from="1590346678203" duration="1697000" />
     </task>
     <servers />
   </component>
@@ -321,11 +319,11 @@
     </state>
     <state x="2362" y="244" key="com.intellij.ide.util.TipDialog/0.0.1280.680/1920.0.1680.1010@1920.0.1680.1010" timestamp="1590166077899" />
     <state x="337" y="164" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1590346678180" />
-    <state x="450" y="257" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590348114663">
+    <state x="450" y="257" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1590350050083">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="2511" y="382" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.680/1920.0.1680.1010@1920.0.1680.1010" timestamp="1590169632863" />
-    <state x="450" y="257" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.680@0.0.1280.680" timestamp="1590348114663" />
+    <state x="450" y="257" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1280.680@0.0.1280.680" timestamp="1590350050083" />
     <state x="2466" y="133" key="refactoring.ChangeSignatureDialog" timestamp="1590168165986">
       <screen x="1920" y="0" width="1680" height="1010" />
     </state>
