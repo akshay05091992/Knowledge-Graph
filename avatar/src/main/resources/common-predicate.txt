@@ -11,3 +11,7 @@ number_of_children
 spouse
 child
 award_received
+official_name
+country
+population
+shares_border_with

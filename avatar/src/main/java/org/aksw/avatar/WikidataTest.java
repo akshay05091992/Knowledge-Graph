@@ -38,20 +38,30 @@ public class WikidataTest {
 		sparqlRepository.initialize();
 		ValueFactory vf = new ValueFactoryImpl();
 		//String subjectIdentifier="Q615";Q9488;Q25369;Q22686
-		String subjectIdentifier="Q25369";
+		String subjectIdentifier="Q22686";
 		String predicateIdentifier="";
 		String objectIdentifier="";
 		String subject=orchestrator(new WikidataTest().findlabels(vf.createLiteral(subjectIdentifier)));
 		String predicate="";
+		if(!predicateIdentifier.isEmpty()) {
+			predicate=orchestrator(new WikidataTest().findlabels(vf.createLiteral(predicateIdentifier)));
+		}
 		String object="";
 		String NationalityIdentifier="";
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
-		
-		String query = "SELECT ?Predicate ?Object  WHERE {"
-		        + "wd:"+subjectIdentifier+"?Predicate ?Object ."
+		String query="";
+		if(!predicateIdentifier.isEmpty()) {
+			query = "SELECT  ?Object  WHERE {"
+		        + "wd:"+subjectIdentifier+" wdt:"+predicateIdentifier+" ?Object ."
 		        + "}";
+		}else {
+			query = "SELECT ?Predicate ?Object  WHERE {"
+			        + "wd:"+subjectIdentifier+"?Predicate ?Object ."
+			        + "}";
+		}
 
 		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
+		if(predicateIdentifier.isEmpty()) {
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
 			if(bs.getValue("Predicate").toString().contains("http://www.wikidata.org/prop/direct/") && (bs.getValue("Object").toString().contains("http://www.wikidata.org/entity/")||bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>"))) {
 				
@@ -70,6 +80,12 @@ public class WikidataTest {
 				
 			}
 			
+		}
+		}else {
+			for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
+				object=orchestrator(new WikidataTest().findlabels(bs.getValue("Object")));
+				triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object)));
+			}
 		}
 		List<Triple> orderedTriples=new WikidataRanking().rankingTripleset(triples);
 		System.out.println(new WikidataVerbalizer().Verbalize(orderedTriples,NationalityIdentifier));

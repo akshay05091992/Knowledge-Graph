@@ -206,15 +206,22 @@ public class TripleConverter {
 			Set<String> uniquepredicate=new HashSet<String>();
 			for(Triple t:input) {
 				SPhraseSpec sentence=nlgFactory.createClause();
+				NLGElement subject;
 				if(g.equals(Gender.MALE)) {
-					sentence.setSubject(nlgFactory.createStringElement("His"));
+					subject=nlgFactory.createStringElement("He");
 				}else if(g.equals(Gender.FEMALE)) {
-					sentence.setSubject(nlgFactory.createStringElement("Her"));
+					subject=nlgFactory.createStringElement("She");
 				}else {
-					sentence.setSubject(nlgFactory.createStringElement("It"));
+					subject=nlgFactory.createStringElement("It");
 				}
+				NPPhraseSpec subjectnoun=nlgFactory.createNounPhrase(subject);
+				subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
+				sentence.setSubject(subjectnoun);
 				if(!uniquepredicate.contains(processpredicate(t.getPredicate().toString()))) {
-					sentence.setVerb(nlgFactory.createStringElement(processpredicate(t.getPredicate().toString())));
+					NLGElement verb=nlgFactory.createStringElement(processpredicate(t.getPredicate().toString()));
+					NPPhraseSpec verbnoun=nlgFactory.createNounPhrase(verb);
+					verbnoun.setFeature(Feature.NUMBER,NumberAgreement.SINGULAR);
+					sentence.setVerb(verbnoun);
 					CoordinatedPhraseElement conjugatingobjects = nlgFactory.createCoordinatedPhrase();
 					if(isDate(t.getObject().toString())) {
 						String datestring=processDateLiteral(t.getObject().toString());
@@ -260,6 +267,7 @@ public class TripleConverter {
 						conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "was");
 					}
 					sentence.setFeature(Feature.RAISE_SPECIFIER, Boolean.FALSE);
+					sentence.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
 					sentence.setFeature(Feature.TENSE,Tense.PRESENT);
 					sentence.setObject(conjugatingobjects);
 					sentenseclause.add(sentence);
@@ -273,6 +281,7 @@ public class TripleConverter {
 					sentencenew.setFeature(Feature.NUMBER,NumberAgreement.PLURAL);
 					sentencenew.setFeature(Feature.RAISE_SPECIFIER, Boolean.TRUE);
 					sentencenew.setFeature(Feature.TENSE, Tense.PRESENT);
+					sentencenew.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
 					sentencenew.setSubject(sentencealreadypresent.getSubject());
 					sentencenew.setVerb(sentencealreadypresent.getVerb());
 					conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "are");

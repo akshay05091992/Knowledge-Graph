@@ -39,18 +39,30 @@ public class WikidataVerbalizer {
 		if(NationalityIdentifier != "") {
 			nationality=getNationality(NationalityIdentifier);
 		}
+		
 		if(input.get(0).getPredicate().toString().equalsIgnoreCase("\"instance_of\"")) {
 			if(input.get(0).getObject().toString().equalsIgnoreCase("\"human\"")) {
 				subject=input.get(0).getSubject().toString();
-				if(input.get(1).getObject().toString().equalsIgnoreCase("\"male\"")) {
+				int indexofgender=0;
+				for(int i=0;i<input.size();i++) {
+					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"")) {
+				if(input.get(i).getObject().toString().equalsIgnoreCase("\"male\"")) {
 					g = Gender.MALE;
-				}else if(input.get(1).getObject().toString().equalsIgnoreCase("\"female\"")) {
+					indexofgender=i;
+					break;
+				}else if(input.get(i).getObject().toString().equalsIgnoreCase("\"female\"")) {
 					g= Gender.FEMALE;
+					indexofgender=i;
+					break;
 				}
 				else {
 					g=Gender.UNKNOWN;
+					indexofgender=i;
+					break;
 				}
-				input.remove(0);
+					}
+				}
+				input.remove(indexofgender);
 				input.remove(0);
 				Map<String,List<Triple>> resultdata = new TripleConverter().getoccupation(input);
 				for ( Map.Entry<String, List<Triple>> entry : resultdata.entrySet()) {
