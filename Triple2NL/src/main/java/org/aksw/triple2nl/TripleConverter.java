@@ -215,7 +215,13 @@ public class TripleConverter {
 					subject=nlgFactory.createStringElement("It");
 				}
 				NPPhraseSpec subjectnoun=nlgFactory.createNounPhrase(subject);
+				boolean flag=false;
+				if(processpredicate(t.getPredicate().toString()).equalsIgnoreCase("is")) {
+					subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.FALSE);
+					flag=true;
+				}else {
 				subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
+				}
 				sentence.setSubject(subjectnoun);
 				if(!uniquepredicate.contains(processpredicate(t.getPredicate().toString()))) {
 					NLGElement verb=nlgFactory.createStringElement(processpredicate(t.getPredicate().toString()));
@@ -248,23 +254,35 @@ public class TripleConverter {
 						
 					}else {
 						NPPhraseSpec determiner;
+						if(!flag) {
 						if(isalive) {
 						     determiner = nlgFactory.createNounPhrase("is");
 						     }else {
 						    	 determiner = nlgFactory.createNounPhrase("was");
 						     }
+						}else {
+							determiner = nlgFactory.createNounPhrase("a");
+						}
 						NLGElement data=nlgFactory.createStringElement(processobject(t.getObject().toString()));
 					     NPPhraseSpec firstclause = nlgFactory.createNounPhrase(data);
+					     if(!"educated at".equalsIgnoreCase(processpredicate(t.getPredicate().toString()))) {
 					     firstclause.setDeterminer(determiner);
+					     }
 						conjugatingobjects.addCoordinate(firstclause);
 						
 					}
 					sentence.setFeature(Feature.NUMBER,NumberAgreement.SINGULAR);
 					conjugatingobjects.setFeature(Feature.RAISE_SPECIFIER, Boolean.FALSE);
+					if(!"educated at".equalsIgnoreCase(processpredicate(t.getPredicate().toString()))) {
+						if(!flag) {
 					if(isalive) {
 					conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "is");
 					}else {
 						conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "was");
+					}
+					}else {
+						conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "a");
+					}
 					}
 					sentence.setFeature(Feature.RAISE_SPECIFIER, Boolean.FALSE);
 					sentence.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
@@ -283,8 +301,17 @@ public class TripleConverter {
 					sentencenew.setFeature(Feature.TENSE, Tense.PRESENT);
 					sentencenew.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
 					sentencenew.setSubject(sentencealreadypresent.getSubject());
-					sentencenew.setVerb(sentencealreadypresent.getVerb());
+					NLGElement verb=sentencealreadypresent.getVerb();
+					NPPhraseSpec verbnoun=nlgFactory.createNounPhrase(verb);
+					verbnoun.setFeature(Feature.NUMBER,NumberAgreement.PLURAL);
+					sentencenew.setVerb(verbnoun);
+					if(!"educated at".equalsIgnoreCase(processpredicate(t.getPredicate().toString()))) {
+						if(!flag) {
 					conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "are");
+						}else {
+							conjugatingobjects.setFeature(InternalFeature.SPECIFIER, "a");
+						}
+					}
 					conjugatingobjects.setFeature(Feature.RAISE_SPECIFIER, Boolean.TRUE);
 					sentencenew.setObject(conjugatingobjects);
 					sentenseclause.set(sentenseclause.size() - 1, sentencenew);
@@ -321,7 +348,13 @@ public class TripleConverter {
 		}
 		
 		public String processpredicate(String Predicate) {
-			return Predicate.replaceAll("_", " ").replaceAll("\"", "").replace("@", "");
+			String pred=Predicate.replaceAll("_", " ").replaceAll("\"", "").replace("@", "");
+			if(pred.equalsIgnoreCase("instance of")) {
+				pred="is";
+			}else if(pred.equalsIgnoreCase("award received")) {
+				pred="received awards";
+			}
+			return pred;
 		}
 	/**
 	 * Return a textual representation for the given triple.
