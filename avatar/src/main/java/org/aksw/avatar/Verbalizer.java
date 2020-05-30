@@ -93,7 +93,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.sparql.pfunction.library.listIndex;
 import org.apache.jena.vocabulary.RDF;
 
 /**
@@ -785,26 +784,20 @@ public class Verbalizer {
 	public String getSimilarEntities(OWLIndividual individual){
 		OWLClass cls = getMostSpecificType(individual);
 		String ret = "";
-		List<String> similarlist = new ArrayList<String>();
 		try {
 			String q;
-			q = "SELECT ?s where {  ?s  ?o <"+cls.toStringID()+">.} LIMIT 100";
+			q = "SELECT ?s where {  ?s  ?o <"+cls.toStringID()+">.} LIMIT 10";
 			QueryExecution qe = qef.createQueryExecution(q);
 			ResultSet results = qe.execSelect();
 			while (results.hasNext()) {
 				RDFNode node = results.next().get("s");
-				similarlist.add(node.toString());
+				ret = ret + " " + node.toString();
 			}
 			qe.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(!similarlist.isEmpty()){
-			Random r = new Random();
-			for(int i = 0; i < 10; i++){
-				ret = ret + " "+ similarlist.get(r.nextInt(similarlist.size()));
-			}
-		}
+
 		return ret;
 	}
 	
@@ -818,13 +811,13 @@ public class Verbalizer {
 			ResultSet results = qe.execSelect();
 			while (results.hasNext()) {
 				RDFNode node = results.next().get("o");
-				return node.toString();
+				ret = ret + " " + node.toString();
 			}
 			qe.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return ret;
 	}
 

@@ -46,7 +46,6 @@ public class Resource1 {
         OWLIndividual ind = new OWLNamedIndividualImpl(IRI.create("http://dbpedia.org/resource/"+subject));
 
         //compute summarization of the entity and verbalize it
-        //String summary = "";
         String summary = verbalizer.summarize(ind);
 
         return summary;
