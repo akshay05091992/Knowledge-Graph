@@ -263,18 +263,24 @@ public class Verbalizer {
 
 	public boolean validatetriples2(String Subject, String Predicate, String Object) {
 		boolean flag = false;
+		boolean marker=false;
 		Elements infobox = doc2.select("table[class*=infobox]");
 		if (ListUtil.isNotEmpty(infobox)) {
 			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
 			for (Element e : infoboxRows) {
 				String line = e.text();
+				if(line.startsWith("Country")) {
+					marker=true;
+				}
+				if(marker) {
 				if (line.startsWith("State") && !((line.replaceAll("State", "")).isEmpty())) {
-					// System.out.println("\n"+line);
+					//System.out.println("\n"+line);
 					flag = true;
 				}
 
 				if (line.startsWith("District") && !line.contains(Object)) {
 					flag = false;
+				}
 				}
 
 			}
@@ -282,6 +288,26 @@ public class Verbalizer {
 		}
 
 		return flag;
+	}
+	
+	public String countryvalidator(String Subject, String Predicate, String Object) {
+		String country="";
+		Elements infobox = doc2.select("table[class*=infobox]");
+		if (ListUtil.isNotEmpty(infobox)) {
+			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
+			for (Element e : infoboxRows) {
+				String line = e.text();
+				if(line.startsWith("Born")) {
+					if(!Object.equals(line.substring(line.lastIndexOf(",") + 1).trim())) {
+						country=line.substring(line.lastIndexOf(",") + 1).trim();
+					}
+				}
+				
+			}
+		}
+		
+		
+		return country;
 	}
 
 	public Set<Triple> getTriples(Resource r, Property p, boolean outgoing) {
@@ -314,7 +340,13 @@ public class Verbalizer {
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
-					} else if (!("birthDate".equals(processnode(p.asNode().toString()))
+					}else if("country".equals(processnode(p.asNode().toString()))){
+						
+						getcorpusfromwikipedia2(processnodeSubject(r.asNode().toString()));
+						String obj=countryvalidator("", "", processnode(n.asNode().toString()));
+						result.add(Triple.create(r.asNode(), p.asNode(), NodeFactory.createURI("http://dbpedia.org/resource/"+obj)));
+						
+					}else if (!("birthDate".equals(processnode(p.asNode().toString()))
 							|| "birthPlace".equals(processnode(p.asNode().toString())))) {
 						result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 					}
