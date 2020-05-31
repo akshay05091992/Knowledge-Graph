@@ -208,9 +208,17 @@ public class TripleConverter {
 				SPhraseSpec sentence=nlgFactory.createClause();
 				NLGElement subject;
 				if(g.equals(Gender.MALE)) {
-					subject=nlgFactory.createStringElement("He");
+					if(processpredicate(t.getPredicate().toString()).equalsIgnoreCase("educated at")) {
+						subject=nlgFactory.createStringElement("He was");
+					}else {
+					subject=nlgFactory.createStringElement("His");
+					}
 				}else if(g.equals(Gender.FEMALE)) {
-					subject=nlgFactory.createStringElement("She");
+					if(processpredicate(t.getPredicate().toString()).equalsIgnoreCase("educated at")) {
+						subject=nlgFactory.createStringElement("She was");
+					}else {
+						subject=nlgFactory.createStringElement("Her");
+					}
 				}else {
 					subject=nlgFactory.createStringElement("It");
 				}
@@ -220,7 +228,7 @@ public class TripleConverter {
 					subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.FALSE);
 					flag=true;
 				}else {
-				subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.TRUE);
+				subjectnoun.setFeature(Feature.POSSESSIVE, Boolean.FALSE);
 				}
 				sentence.setSubject(subjectnoun);
 				if(!uniquepredicate.contains(processpredicate(t.getPredicate().toString()))) {
