@@ -290,6 +290,24 @@ public class Verbalizer {
 		return flag;
 	}
 	
+	public boolean spousevalidate(String Subject, String Predicate, String Object) {
+		boolean flag = false;
+		Elements infobox = doc2.select("table[class*=infobox]");
+		if (ListUtil.isNotEmpty(infobox)) {
+			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
+			for (Element e : infoboxRows) {
+				String line = e.text();
+				if(line.startsWith("Spouse(s)") && line.contains(Object)) {
+					flag=true;
+				}
+
+			}
+
+		}
+
+		return flag;
+	}
+	
 	public String countryvalidator(String Subject, String Predicate, String Object) {
 		String country="";
 		Elements infobox = doc2.select("table[class*=infobox]");
@@ -346,7 +364,13 @@ public class Verbalizer {
 						String obj=countryvalidator("", "", processnode(n.asNode().toString()));
 						result.add(Triple.create(r.asNode(), p.asNode(), NodeFactory.createURI("http://dbpedia.org/resource/"+obj)));
 						
-					}else if (!("birthDate".equals(processnode(p.asNode().toString()))
+					}else if("spouse".equals(processnode(p.asNode().toString()))){
+						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						if (spousevalidate("", "", processnode(n.asNode().toString()))) {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
+					}
+					else if (!("birthDate".equals(processnode(p.asNode().toString()))
 							|| "birthPlace".equals(processnode(p.asNode().toString())))) {
 						result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 					}

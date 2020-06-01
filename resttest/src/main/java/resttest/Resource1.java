@@ -9,9 +9,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.aksw.avatar.Verbalizer;
+import org.aksw.avatar.WikidataTest;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.junit.Test;
-
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.TupleQueryResultHandlerException;
+import org.openrdf.repository.RepositoryException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -29,6 +33,8 @@ public class Resource1 {
 
     //create the verbalizer used to generate the textual summarization
     private static final Verbalizer verbalizer = new Verbalizer(endpoint, "cache", null);
+    
+    private static final WikidataTest wikidataverbalizer= new WikidataTest();
     /*
     @GET
     public String testing(){
@@ -83,6 +89,33 @@ public class Resource1 {
         String thumbnail = verbalizer.getThumbnail(ind);
 
         return thumbnail;
+
+    }
+    
+    @Path("/getWikidata")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getWikidata(@QueryParam("Subject")String subjectidentifier,@QueryParam("Predicate")String predicateidentifier){
+
+    	String subjectinput="";
+    	String predicateinput="";
+    	if(!(subjectidentifier == null)) {
+    		subjectinput=subjectidentifier;
+    	}
+    	if(!(predicateidentifier == null)) {
+    		predicateinput=predicateidentifier;
+    	}
+        //compute summarization of the entity and verbalize it
+        String wikidatasummary="";
+		try {
+			wikidatasummary = wikidataverbalizer.wikidatamain(subjectinput, predicateinput);
+		} catch (TupleQueryResultHandlerException | QueryEvaluationException | RepositoryException
+				| MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        return wikidatasummary;
 
     }
 

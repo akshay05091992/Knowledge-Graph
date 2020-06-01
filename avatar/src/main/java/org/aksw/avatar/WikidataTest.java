@@ -19,6 +19,7 @@ import org.aksw.triple2nl.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,14 +33,14 @@ public class WikidataTest {
 	
 	private static TripleConverter converter;
 	
-	public static void main(String[]args) throws QueryEvaluationException, RepositoryException, MalformedQueryException, TupleQueryResultHandlerException {
+	public static String wikidatamain(String subjectinput,String predicateinput) throws QueryEvaluationException, RepositoryException, MalformedQueryException, TupleQueryResultHandlerException {
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
 		List<Triple> triples = new ArrayList<Triple>();
 		sparqlRepository.initialize();
 		ValueFactory vf = new ValueFactoryImpl();
 		//String subjectIdentifier="Q615";Q9488;Q25369;Q22686;Q937
-		String subjectIdentifier="Q25369";
-		String predicateIdentifier="";
+		String subjectIdentifier=subjectinput;
+		String predicateIdentifier=predicateinput;
 		String objectIdentifier="";
 		String subject=orchestrator(new WikidataTest().findlabels(vf.createLiteral(subjectIdentifier)));
 		String predicate="";
@@ -88,7 +89,7 @@ public class WikidataTest {
 			}
 		}
 		List<Triple> orderedTriples=new WikidataRanking().rankingTripleset(triples);
-		System.out.println(new WikidataVerbalizer().Verbalize(orderedTriples,NationalityIdentifier));
+		return new WikidataVerbalizer().Verbalize(orderedTriples,NationalityIdentifier);
 	}
 	
 	public static String orchestrator(String literal) {
@@ -99,7 +100,7 @@ public class WikidataTest {
 	}
 	public List readcommonpredicate() {
 		List<String> predicate=new ArrayList<String>();
-		try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/common-predicate.txt"))) {
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/common-predicate.txt")))) {
 		    String line;
 		    while ((line = br.readLine()) != null) {
 		       // process the line.
