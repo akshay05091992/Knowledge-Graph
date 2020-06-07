@@ -92,6 +92,31 @@ public class Resource1 {
 
     }
     
+    @Path("/getImageWikidata")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getImageWikidata(@QueryParam("Subject")String subjectidentifier){
+    	System.out.println("hi");
+    	String subjectinput="";
+    	String predicateinput="";
+    	if(!(subjectidentifier == null)) {
+    		subjectinput=subjectidentifier;
+    	}
+    	
+        //compute summarization of the entity and verbalize it
+        String img="";
+		try {
+			img = WikidataTest.getImage(subjectinput);
+		} catch ( QueryEvaluationException | RepositoryException
+				| MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        return img;
+
+    }
+    
     @Path("/getWikidata")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -108,7 +133,7 @@ public class Resource1 {
         //compute summarization of the entity and verbalize it
         String wikidatasummary="";
 		try {
-			wikidatasummary = wikidataverbalizer.wikidatamain(subjectinput, predicateinput);
+			wikidatasummary = WikidataTest.wikidatamain(subjectinput, predicateinput);
 		} catch (TupleQueryResultHandlerException | QueryEvaluationException | RepositoryException
 				| MalformedQueryException e) {
 			// TODO Auto-generated catch block

@@ -27,99 +27,90 @@ import org.aksw.triple2nl.*;
 public class WikidataVerbalizer {
 	private NLGFactory nlgFactory;
 	private Realiser realiser;
-	
-	public String Verbalize(List<Triple> input,String NationalityIdentifier) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
-		String text="";
-		Gender g=Gender.UNKNOWN;
-		String subject="";
-		String nationality="";
-		String occupation="";
-		boolean isalive=true;
+
+	public String Verbalize(List<Triple> input, String NationalityIdentifier, String subjectIdentifier)
+			throws RepositoryException, MalformedQueryException, QueryEvaluationException {
+		String text = "";
+		Gender g = Gender.UNKNOWN;
+		String subject = "";
+		String nationality = "";
+		String occupation = "";
+		boolean isalive = true;
+		Integer indexGender = 0;
 		List<NLGElement> result = new ArrayList<NLGElement>();
-		if(NationalityIdentifier != "") {
-			nationality=getNationality(NationalityIdentifier);
+		if (NationalityIdentifier != "") {
+			nationality = getNationality(NationalityIdentifier);
 		}
-		
-		if(input.get(0).getPredicate().toString().equalsIgnoreCase("\"instance_of\"")) {
-			if(input.get(0).getObject().toString().equalsIgnoreCase("\"human\"")) {
-				subject=input.get(0).getSubject().toString();
-				int indexofgender=0;
-				for(int i=0;i<input.size();i++) {
-					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"")) {
-				if(input.get(i).getObject().toString().equalsIgnoreCase("\"male\"")) {
-					g = Gender.MALE;
-					indexofgender=i;
-					break;
-				}else if(input.get(i).getObject().toString().equalsIgnoreCase("\"female\"")) {
-					g= Gender.FEMALE;
-					indexofgender=i;
-					break;
-				}
-				else {
-					g=Gender.UNKNOWN;
-					indexofgender=i;
-					break;
-				}
+
+		if (input.get(0).getPredicate().toString().equalsIgnoreCase("\"instance_of\"")) {
+			if (input.get(0).getObject().toString().equalsIgnoreCase("\"human\"")) {
+				subject = input.get(0).getSubject().toString();
+				for(int i = 0; i < input.size(); i++){
+					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"")){
+						indexGender = i;
 					}
 				}
-				input.remove(indexofgender);
+				String gender = WikidataTest.getGender(subjectIdentifier);
+				if(gender.trim().equalsIgnoreCase("male")){
+					g = Gender.MALE;
+				}else if(gender.trim().equalsIgnoreCase("female")){
+					g = Gender.FEMALE;
+				}
+				input.remove(indexGender);
 				input.remove(0);
-				Map<String,List<Triple>> resultdata = new TripleConverter().getoccupation(input);
-				for ( Map.Entry<String, List<Triple>> entry : resultdata.entrySet()) {
-				    occupation = entry.getKey();
-				    input = entry.getValue();
-				    
+				int count = 0;
+				Map<String, List<Triple>> resultdata = new TripleConverter().getoccupation(input);
+				for (Map.Entry<String, List<Triple>> entry : resultdata.entrySet()) {
+					if (count < 5) {
+						occupation = entry.getKey();
+						input = entry.getValue();
+					}
+					count++;
 				}
-				
-				if(isAlive(input)) {
-					text=new WikidataTest().orchestrator(subject).replace("_", " ")+" is a "+nationality+" "+occupation;
-					
-				}else {
-					text=new WikidataTest().orchestrator(subject).replace("_", " ")+" was a "+nationality+" "+occupation;
-					isalive=false;
+
+				if (isAlive(input)) {
+					text = WikidataTest.orchestrator(subject).replace("_", " ") + " is a " + nationality + " "
+							+ occupation;
+
+				} else {
+					text = WikidataTest.orchestrator(subject).replace("_", " ") + " was a " + nationality + " "
+							+ occupation;
+					isalive = false;
 				}
-					
+
 			}
 		}
-		text+=new TripleConverter().textgeneration(input, g, isalive);
-		
+		text += new TripleConverter().textgeneration(input, g, isalive);
+
 		System.out.println(input.toString());
 		return text;
 	}
-	
-	
-	
-	
-	
-	
-	
-	public String getNationality(String country) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
-		String text="";
-		country=country.replaceAll("\"", "").replaceAll("_", " ").replaceAll("http://www.wikidata.org/entity/", "");
+
+	public String getNationality(String country)
+			throws RepositoryException, MalformedQueryException, QueryEvaluationException {
+		String text = "";
+		country = country.replaceAll("\"", "").replaceAll("_", " ").replaceAll("http://www.wikidata.org/entity/", "");
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
 		sparqlRepository.initialize();
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
-		String query = "SELECT ?demonym WHERE {" +
-				"  wd:"+country+" wdt:P1549 ?demonym ." + 
-				"  FILTER (LANG(?demonym) = \"en\") . }";
+		String query = "SELECT ?demonym WHERE {" + "  wd:" + country + " wdt:P1549 ?demonym ."
+				+ "  FILTER (LANG(?demonym) = \"en\") . }";
 		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
-			text=new WikidataTest().orchestrator(bs.getValue("demonym").toString());
+			text = new WikidataTest().orchestrator(bs.getValue("demonym").toString());
 		}
-		
-		
+
 		return text;
 	}
-	
+
 	public boolean isAlive(List<Triple> input) {
-		boolean b=true;
-		for(Triple t:input) {
-			if(t.getPredicate().toString().equalsIgnoreCase("\"date_of_death\"")) {
-				b=false;
+		boolean b = true;
+		for (Triple t : input) {
+			if (t.getPredicate().toString().equalsIgnoreCase("\"date_of_death\"")) {
+				b = false;
 			}
 		}
 		return b;
 	}
-	
 
 }

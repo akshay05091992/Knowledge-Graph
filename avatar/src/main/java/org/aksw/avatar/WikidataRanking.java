@@ -38,38 +38,14 @@ public class WikidataRanking {
 		}
 		tripleset.removeAll(triples);
 		
-		HashMap<Node,Integer> counts = new HashMap<Node,Integer>();
-
-        for(int i = 0; i < tripleset.size(); i++) {
-            if(counts.containsKey(tripleset.get(i).getPredicate())) {
-                Integer c = counts.get(tripleset.get(i).getPredicate()) + 1;
-                counts.put(tripleset.get(i).getPredicate(), c);
-            }
-            else {
-                counts.put(tripleset.get(i).getPredicate(),1);
-            }
-        }
-        
-        ValueComparator<Node,Integer> bvc = new ValueComparator<Node,Integer>(counts);
-        TreeMap<Node,Integer> sortedMap = new TreeMap<Node,Integer>(bvc);
-        sortedMap.putAll(counts);
-
-        ArrayList<Node> output = new ArrayList<Node>();
-        for(Node i : sortedMap.keySet()) {
-            for(int c = 0; c < sortedMap.get(i); c++) {
-                output.add(i);
-            }
-        }
-        
+		
 		if(triples.size()<Threshold) {
 			int Numberoftriplesneeded=Threshold-tripleset.size();
 			int i=0;
 			for(Triple s:tripleset) {
-				if(s.predicateMatches(output.get(i))) {
-					triples.add(s);
-					i++;
-					Numberoftriplesneeded=Numberoftriplesneeded-1;
-				}
+				triples.add(s);
+				i++;
+				Numberoftriplesneeded=Numberoftriplesneeded-1;
 				if(Numberoftriplesneeded==0) {
 					break;
 				}
