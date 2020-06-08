@@ -926,6 +926,12 @@ public class Verbalizer {
 	public String getIntroSentence(OWLIndividual individual, OWLClass nc) {
 		String nationality = getNationality(individual, nc);
 		String birthDate=getBirthDate(individual,nc);
+		boolean check=true;
+		if(birthDate=="") {
+			check=false;
+		}
+		String dateString="";
+		if(check) {
 		DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 	     Date date = null;
 		try {
@@ -935,7 +941,8 @@ public class Verbalizer {
 			e.printStackTrace();
 		}
 	     DateFormat format2 = new SimpleDateFormat("MMMMM dd, yyyy");
-	     String dateString = format2.format(date);
+	      dateString = format2.format(date);
+		}
 		String BirthSentence="";
 		String IntroSentence="";
 		String entity = individual.toString().substring(individual.toString().lastIndexOf("/") + 1,
@@ -951,12 +958,19 @@ public class Verbalizer {
 		if (getIsAlive(individual)) {
 			IntroSentence=  entity + " is "+article+" "+ nationality + " "
 					+ nc.toString().substring(nc.toString().lastIndexOf("/") + 1, nc.toString().length() - 1);
+			if(check) {
 			BirthSentence=". "+entity+"'s birth date is "+dateString;
+			}
 		} else {
 			IntroSentence= entity + " was a " + nationality + " "
 					+ nc.toString().substring(nc.toString().lastIndexOf("/") + 1, nc.toString().length() - 1)
 							.toString();
 			String deathdate=getDeathDate(individual,nc);
+			boolean check1=true;
+			if(deathdate=="") {
+				check1=false;
+			}
+			if(check1) {
 			DateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
 		     Date date2 = null;
 			try {
@@ -968,9 +982,13 @@ public class Verbalizer {
 		     DateFormat format4 = new SimpleDateFormat("MMMMM dd, yyyy");
 		     String dateString1 = format4.format(date2);
 			BirthSentence=". "+entity+"'s birth date was "+dateString+". "+entity+"'s death date was "+dateString1;
+			}else if(check) {
+				BirthSentence=". "+entity+"'s birth date was "+dateString;
+			}
 		}
-		
+		if(check) {
 		IntroSentence=IntroSentence+BirthSentence;
+		}
 		
 		return IntroSentence;
 	}
