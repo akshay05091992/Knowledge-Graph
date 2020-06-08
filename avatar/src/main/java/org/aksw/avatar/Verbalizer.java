@@ -26,6 +26,8 @@ package org.aksw.avatar;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -245,13 +247,78 @@ public class Verbalizer {
 
 	public boolean validatetriples(String Subject, String Predicate, String Object) {
 		boolean flag = false;
+		boolean marker=false;
+		boolean marker1=false;
+		if(Predicate.equalsIgnoreCase("birthDate")) {
+			marker=true;
+		}
+		
+		if(Predicate.equalsIgnoreCase("deathDate")) {
+			marker1=true;
+		}
+		String Day="";
+		String Month="";
+		String Year="";
+		if(marker) {
+		DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatNowDay = new SimpleDateFormat("dd");
+		SimpleDateFormat formatNowMonth = new SimpleDateFormat("MMMM");
+		SimpleDateFormat formatNowYear = new SimpleDateFormat("YYYY");
+	     try {
+			Date date = format1.parse(Object);
+			Day=formatNowDay.format(date);
+			Month=formatNowMonth.format(date);
+			Year=formatNowYear.format(date);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+		
+		String Day1="";
+		String Month1="";
+		String Year1="";
+		if(marker1) {
+		DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatNowDay = new SimpleDateFormat("dd");
+		SimpleDateFormat formatNowMonth = new SimpleDateFormat("MMMM");
+		SimpleDateFormat formatNowYear = new SimpleDateFormat("YYYY");
+	     try {
+			Date date = format1.parse(Object);
+			Day1=formatNowDay.format(date);
+			Month1=formatNowMonth.format(date);
+			Year1=formatNowYear.format(date);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
 		Elements infobox = doc.select("table[class*=infobox]");
 		if (ListUtil.isNotEmpty(infobox)) {
 			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
 			for (Element e : infoboxRows) {
 				String line = e.text();
-				if (line.startsWith("Born") && line.contains(Object)) {
+				if (line.startsWith("Born")) {
+					if(marker) {
+						
+						if(line.contains(Day) && line.contains(Year) && line.toLowerCase().contains(Month.toLowerCase())) {
+							flag=true;
+						}
+						
+					}else {
+					if(line.contains(Object)) {
 					flag = true;
+					}
+					}
+				}
+				if(line.startsWith("Died")) {
+					if(marker1) {
+						if(line.contains(Day1) && line.contains(Year1) && line.toLowerCase().contains(Month1.toLowerCase())) {
+							flag=true;
+						}
+					}
 				}
 
 			}
@@ -290,23 +357,7 @@ public class Verbalizer {
 		return flag;
 	}
 	
-	public boolean spousevalidate(String Subject, String Predicate, String Object) {
-		boolean flag = false;
-		Elements infobox = doc2.select("table[class*=infobox]");
-		if (ListUtil.isNotEmpty(infobox)) {
-			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
-			for (Element e : infoboxRows) {
-				String line = e.text();
-				if(line.startsWith("Spouse(s)") && line.contains(Object)) {
-					flag=true;
-				}
-
-			}
-
-		}
-
-		return flag;
-	}
+	
 	
 	public String countryvalidator(String Subject, String Predicate, String Object) {
 		String country="";
@@ -364,14 +415,9 @@ public class Verbalizer {
 						String obj=countryvalidator("", "", processnode(n.asNode().toString()));
 						result.add(Triple.create(r.asNode(), p.asNode(), NodeFactory.createURI("http://dbpedia.org/resource/"+obj)));
 						
-					}else if("spouse".equals(processnode(p.asNode().toString()))){
-						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
-						if (spousevalidate("", "", processnode(n.asNode().toString()))) {
-							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
-						}
 					}
 					else if (!("birthDate".equals(processnode(p.asNode().toString()))
-							|| "birthPlace".equals(processnode(p.asNode().toString())))) {
+							|| "birthPlace".equals(processnode(p.asNode().toString())) || "termPeriod".equals(processnode(p.asNode().toString())))) {
 						result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 					}
 				}
@@ -879,6 +925,19 @@ public class Verbalizer {
 
 	public String getIntroSentence(OWLIndividual individual, OWLClass nc) {
 		String nationality = getNationality(individual, nc);
+		String birthDate=getBirthDate(individual,nc);
+		DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+	     Date date = null;
+		try {
+			date = format1.parse(birthDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	     DateFormat format2 = new SimpleDateFormat("MMMMM dd, yyyy");
+	     String dateString = format2.format(date);
+		String BirthSentence="";
+		String IntroSentence="";
 		String entity = individual.toString().substring(individual.toString().lastIndexOf("/") + 1,
 				individual.toString().length() - 1).replaceAll("_"," ");
 		String article;
@@ -890,14 +949,91 @@ public class Verbalizer {
 			article = "a";
 		}
 		if (getIsAlive(individual)) {
-			return  entity + " is "+article+" "+ nationality + " "
+			IntroSentence=  entity + " is "+article+" "+ nationality + " "
 					+ nc.toString().substring(nc.toString().lastIndexOf("/") + 1, nc.toString().length() - 1);
+			BirthSentence=". "+entity+"'s birth date is "+dateString;
 		} else {
-			return entity + " was a " + nationality + " "
+			IntroSentence= entity + " was a " + nationality + " "
 					+ nc.toString().substring(nc.toString().lastIndexOf("/") + 1, nc.toString().length() - 1)
 							.toString();
+			String deathdate=getDeathDate(individual,nc);
+			DateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
+		     Date date2 = null;
+			try {
+				date2 = format3.parse(deathdate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		     DateFormat format4 = new SimpleDateFormat("MMMMM dd, yyyy");
+		     String dateString1 = format4.format(date2);
+			BirthSentence=". "+entity+"'s birth date was "+dateString+". "+entity+"'s death date was "+dateString1;
 		}
+		
+		IntroSentence=IntroSentence+BirthSentence;
+		
+		return IntroSentence;
 	}
+	
+	
+	public String getDeathDate(OWLIndividual individual, OWLClass cls) {
+		try {
+			String q;
+			String subject=individual.toString().replace("<http://dbpedia.org/resource/", "");
+			subject=subject.replace(">", "");
+			getcorpusfromwikipedia(subject);
+			q = "SELECT ?o where { " + individual.toString() + " <http://dbpedia.org/ontology/deathDate> ?o.}";
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				String Object=node.toString().replace("^^http://www.w3.org/2001/XMLSchema#date", "");
+				boolean flag=validatetriples(subject,
+						processnode("http://dbpedia.org/ontology/deathDate"), Object);
+						if(flag) {
+							return Object;
+						}
+				//TODO
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "";
+	}
+	
+	public String getBirthDate(OWLIndividual individual, OWLClass cls) {
+		try {
+			String q;
+			String subject=individual.toString().replace("<http://dbpedia.org/resource/", "");
+			subject=subject.replace(">", "");
+			getcorpusfromwikipedia(subject);
+			q = "SELECT ?o where { " + individual.toString() + " <http://dbpedia.org/ontology/birthDate> ?o.}";
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				String Object=node.toString().replace("^^http://www.w3.org/2001/XMLSchema#date", "");
+				boolean flag=validatetriples(subject,
+						processnode("http://dbpedia.org/ontology/birthDate"), Object);
+						if(flag) {
+							return Object;
+						}
+				//TODO
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "";
+	}
+	
 
 	public String getNationality(OWLIndividual individual, OWLClass cls) {
 		try {
