@@ -409,7 +409,14 @@ public class Verbalizer {
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
-					}else if("country".equals(processnode(p.asNode().toString()))){
+					}else if("residence".equals(processnode(p.asNode().toString()))){
+						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
+					}
+					
+					else if("country".equals(processnode(p.asNode().toString()))){
 						
 						getcorpusfromwikipedia2(processnodeSubject(r.asNode().toString()));
 						String obj=countryvalidator("", "", processnode(n.asNode().toString()));
@@ -519,6 +526,10 @@ public class Verbalizer {
 
 		// compute the gender of the resource
 		Gender g = getGender(resource);
+		if(g.equals(Gender.UNKNOWN)) {
+		
+		 g=getGender(resource,namedClass);
+		}
 
 		// get a list of possible subject replacements
 		
@@ -994,6 +1005,7 @@ public class Verbalizer {
 	}
 	
 	
+	
 	public String getDeathDate(OWLIndividual individual, OWLClass cls) {
 		try {
 			String q;
@@ -1203,6 +1215,36 @@ public class Verbalizer {
 		// lookup the gender
 		Gender g = gender.getGender(resource.getURI(), firstToken);
 		return g;
+	}
+	
+	public Gender getGender(Resource individual, OWLClass cls) {
+		Gender g=null;
+		String subject="<"+individual.toString()+">";
+		try {
+			String q;
+			q = "SELECT ?o where { " + subject + " <http://xmlns.com/foaf/0.1/gender> ?o.}";
+			QueryExecution qe = qef.createQueryExecution(q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				if(node.toString().equalsIgnoreCase("male@en")) {
+					g=Gender.MALE;
+				}else if (node.toString().equalsIgnoreCase("female@en")) {
+					g=Gender.FEMALE;
+				}else {
+					g=Gender.UNKNOWN;
+				}
+				
+			}
+			
+			
+		}catch (Exception e) {
+			//e.printStackTrace();
+			g=Gender.UNKNOWN;
+		}
+		
+		return g;
+		
 	}
 
 	/**
