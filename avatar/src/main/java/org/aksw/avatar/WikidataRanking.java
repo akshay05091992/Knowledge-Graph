@@ -26,7 +26,7 @@ public class WikidataRanking {
 	
 	
 	public List<Triple> rankingTripleset(List<Triple> tripleset) {
-		int Threshold=20;
+		int Threshold=15;
 		List<Triple> triples= new ArrayList<Triple>();
 		List<String> commonpredicate=new WikidataTest().readcommonpredicate();
 		for(String s:commonpredicate) {

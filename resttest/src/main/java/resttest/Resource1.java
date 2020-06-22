@@ -58,6 +58,30 @@ public class Resource1 {
 
     }
     
+    @Path("/getImage")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getImageWikidata(@QueryParam("Subject")String subjectidentifier){
+    	String subjectinput="";
+    	String predicateinput="";
+    	if(!(subjectidentifier == null)) {
+    		subjectinput=subjectidentifier;
+    	}
+    	
+        //compute summarization of the entity and verbalize it
+        String img="";
+		try {
+			img = WikidataTest.getImage(subjectinput);
+		} catch ( QueryEvaluationException | RepositoryException
+				| MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        return img;
+
+    }
+    
     @Path("/getSimilar")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -79,7 +103,7 @@ public class Resource1 {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getThumnail(@QueryParam("Subject")String subject){
-
+    	//System.out.println("hi");
         //OWLClass cls = new OWLClassImpl(IRI.create("http://dbpedia.org/ontology/"+classname));
 
         //define the entity to summarize
@@ -92,30 +116,7 @@ public class Resource1 {
 
     }
     
-    @Path("/getImageWikidata")
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getImageWikidata(@QueryParam("Subject")String subjectidentifier){
-    	System.out.println("hi");
-    	String subjectinput="";
-    	String predicateinput="";
-    	if(!(subjectidentifier == null)) {
-    		subjectinput=subjectidentifier;
-    	}
-    	
-        //compute summarization of the entity and verbalize it
-        String img="";
-		try {
-			img = WikidataTest.getImage(subjectinput);
-		} catch ( QueryEvaluationException | RepositoryException
-				| MalformedQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-        return img;
-
-    }
     
     @Path("/getWikidata")
     @GET

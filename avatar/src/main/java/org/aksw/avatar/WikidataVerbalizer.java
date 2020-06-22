@@ -36,7 +36,8 @@ public class WikidataVerbalizer {
 		String nationality = "";
 		String occupation = "";
 		boolean isalive = true;
-		Integer indexGender = 0;
+		int indexGender = 0;
+		int indexInstance = 0;
 		List<NLGElement> result = new ArrayList<NLGElement>();
 		if (NationalityIdentifier != "") {
 			nationality = getNationality(NationalityIdentifier);
@@ -46,19 +47,30 @@ public class WikidataVerbalizer {
 			if (input.get(0).getObject().toString().equalsIgnoreCase("\"human\"")) {
 				subject = input.get(0).getSubject().toString();
 				for(int i = 0; i < input.size(); i++){
-					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"")){
+					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"") || input.get(i).getPredicate().toString().contains("sex_or_gender")){
 						indexGender = i;
 					}
+					if(input.get(i).getObject().toString().equalsIgnoreCase("\"human\"")){
+						indexInstance = i;
+					}
 				}
+				System.out.println("hi"+input.get(1)+indexInstance);
+				if(indexInstance != 0){
+					input.remove(indexInstance);
+					input.remove(indexGender-1);
+				}else{
+					input.remove(indexGender);
+				}
+				indexGender = 0;
+				input.remove(indexGender);
+				int count = 0;
 				String gender = WikidataTest.getGender(subjectIdentifier);
 				if(gender.trim().equalsIgnoreCase("male")){
 					g = Gender.MALE;
 				}else if(gender.trim().equalsIgnoreCase("female")){
 					g = Gender.FEMALE;
 				}
-				input.remove(indexGender);
-				input.remove(0);
-				int count = 0;
+				isalive = isAlive(subjectIdentifier);
 				Map<String, List<Triple>> resultdata = new TripleConverter().getoccupation(input);
 				for (Map.Entry<String, List<Triple>> entry : resultdata.entrySet()) {
 					if (count < 5) {
@@ -68,7 +80,7 @@ public class WikidataVerbalizer {
 					count++;
 				}
 
-				if (isAlive(input)) {
+				if (isalive) {
 					text = WikidataTest.orchestrator(subject).replace("_", " ") + " is a " + nationality + " "
 							+ occupation;
 
@@ -103,13 +115,23 @@ public class WikidataVerbalizer {
 		return text;
 	}
 
-	public boolean isAlive(List<Triple> input) {
+	public boolean isAlive(String subject) {
 		boolean b = true;
-		for (Triple t : input) {
-			if (t.getPredicate().toString().equalsIgnoreCase("\"date_of_death\"")) {
+		try {
+			if(!WikidataTest.getdeathDate(subject).equalsIgnoreCase("")){
 				b = false;
 			}
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 		return b;
 	}
 

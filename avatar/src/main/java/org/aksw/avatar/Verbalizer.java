@@ -919,7 +919,6 @@ public class Verbalizer {
 		try {
 			String q;
 			q = "SELECT ?o where { <"+individual.toStringID()+"> <http://dbpedia.org/ontology/thumbnail> ?o.}";
-			System.out.println("query"+q);
 			QueryExecution qe = qef.createQueryExecution(q);
 			ResultSet results = qe.execSelect();
 			while (results.hasNext()) {

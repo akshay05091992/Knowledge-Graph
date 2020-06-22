@@ -115,12 +115,18 @@ public class WikidataTest {
 				triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object)));
 			}
 		}
-		triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_birth"), NodeFactory.createLiteral(getbirthPlace(subjectIdentifier).split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
-		object = getdeathDate(subjectIdentifier);
-		if(!object.equalsIgnoreCase("") || object != null){
-			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_death"), NodeFactory.createLiteral(getdeathDate(subjectIdentifier).split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
+		object = getbirthPlace(subjectIdentifier);
+		if(!object.equalsIgnoreCase("") && object != null){
+			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_birth"), NodeFactory.createLiteral(object.split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
 		}
-		triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("instance_of"), NodeFactory.createLiteral(getInstanceOf(subjectIdentifier))));
+		object = getdeathDate(subjectIdentifier);
+		if(!object.equalsIgnoreCase("") && object != null){
+			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_death"), NodeFactory.createLiteral(object.split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
+		}
+		object = getInstanceOf(subjectIdentifier);
+		if(!object.equalsIgnoreCase("") && object != null){
+			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("instance_of"), NodeFactory.createLiteral(object)));
+		}
 		object = getCitizenship(subjectIdentifier);
 		if((!object.equalsIgnoreCase("") || object != null) && (NationalityIdentifier.equalsIgnoreCase(""))){
 			NationalityIdentifier = object;
@@ -177,7 +183,7 @@ public class WikidataTest {
 			return "";
 		}else{
 			query = "SELECT ?Object  WHERE {wd:"+subject+" wdt:P18 ?Object .}";
-			System.out.println(query);
+			//System.out.println(query);
 			SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
 			sparqlRepository.initialize();
 			RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
