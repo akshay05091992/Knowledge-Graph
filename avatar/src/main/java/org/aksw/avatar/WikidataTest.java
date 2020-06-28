@@ -116,19 +116,19 @@ public class WikidataTest {
 			}
 		}
 		object = getbirthPlace(subjectIdentifier);
-		if(!object.equalsIgnoreCase("") && object != null){
+		if(object != null && !object.equalsIgnoreCase("")){
 			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_birth"), NodeFactory.createLiteral(object.split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
 		}
 		object = getdeathDate(subjectIdentifier);
-		if(!object.equalsIgnoreCase("") && object != null){
+		if(object != null && !object.equalsIgnoreCase("")){
 			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_death"), NodeFactory.createLiteral(object.split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
 		}
 		object = getInstanceOf(subjectIdentifier);
-		if(!object.equalsIgnoreCase("") && object != null){
+		if(object != null && !object.equalsIgnoreCase("")){
 			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("instance_of"), NodeFactory.createLiteral(object)));
 		}
 		object = getCitizenship(subjectIdentifier);
-		if((!object.equalsIgnoreCase("") || object != null) && (NationalityIdentifier.equalsIgnoreCase(""))){
+		if((object != null && !object.equalsIgnoreCase("")) && (NationalityIdentifier.equalsIgnoreCase(""))){
 			NationalityIdentifier = object;
 		}
 		List<Triple> orderedTriples=new WikidataRanking().rankingTripleset(triples);
@@ -264,6 +264,44 @@ public class WikidataTest {
 			TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
 			for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
 				dob = orchestrator(new WikidataTest().findlabels(bs.getValue("Object"))); 
+			}
+		}
+		return dob;
+	}
+	
+	public static String getOccupationFromDb(String subject) throws RepositoryException, MalformedQueryException, QueryEvaluationException{
+		String query = "";
+		String dob = null;
+		if(subject == null || subject == ""){
+			return dob;
+		}else{
+			query = "SELECT ?Object  WHERE {wd:"+subject+" wdt:P106 ?Object .}";
+			System.out.println(query);
+			SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
+			sparqlRepository.initialize();
+			RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
+			TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
+			for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
+				dob = orchestrator(new WikidataTest().findlabels(bs.getValue("Object"))); 
+			}
+		}
+		return dob;
+	}
+	
+	public static String getPronunciation(String subject) throws RepositoryException, MalformedQueryException, QueryEvaluationException{
+		String query = "";
+		String dob = null;
+		if(subject == null || subject == ""){
+			return dob;
+		}else{
+			query = "SELECT ?Object  WHERE {wd:"+subject+" wdt:P443 ?Object .}";
+			System.out.println(query);
+			SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
+			sparqlRepository.initialize();
+			RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
+			TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
+			for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
+				dob = bs.getValue("Object").toString(); 
 			}
 		}
 		return dob;

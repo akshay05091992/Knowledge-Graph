@@ -46,28 +46,29 @@ public class WikidataVerbalizer {
 		if (input.get(0).getPredicate().toString().equalsIgnoreCase("\"instance_of\"")) {
 			if (input.get(0).getObject().toString().equalsIgnoreCase("\"human\"")) {
 				subject = input.get(0).getSubject().toString();
-				for(int i = 0; i < input.size(); i++){
-					if(input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"") || input.get(i).getPredicate().toString().contains("sex_or_gender")){
+				for (int i = 0; i < input.size(); i++) {
+					if (input.get(i).getPredicate().toString().equalsIgnoreCase("\"sex_or_gender\"")
+							|| input.get(i).getPredicate().toString().contains("sex_or_gender")) {
 						indexGender = i;
 					}
-					if(input.get(i).getObject().toString().equalsIgnoreCase("\"human\"")){
+					if (input.get(i).getObject().toString().equalsIgnoreCase("\"human\"")) {
 						indexInstance = i;
 					}
 				}
-				System.out.println("hi"+input.get(1)+indexInstance);
-				if(indexInstance != 0){
+
+				if (indexInstance != 0) {
 					input.remove(indexInstance);
-					input.remove(indexGender-1);
-				}else{
+					input.remove(indexGender - 1);
+				} else {
 					input.remove(indexGender);
 				}
 				indexGender = 0;
 				input.remove(indexGender);
 				int count = 0;
 				String gender = WikidataTest.getGender(subjectIdentifier);
-				if(gender.trim().equalsIgnoreCase("male")){
+				if (gender.trim().equalsIgnoreCase("male")) {
 					g = Gender.MALE;
-				}else if(gender.trim().equalsIgnoreCase("female")){
+				} else if (gender.trim().equalsIgnoreCase("female")) {
 					g = Gender.FEMALE;
 				}
 				isalive = isAlive(subjectIdentifier);
@@ -80,13 +81,22 @@ public class WikidataVerbalizer {
 					count++;
 				}
 
+				if (occupation.trim().equalsIgnoreCase("")) {
+					occupation = WikidataTest.getOccupationFromDb(subjectIdentifier);
+				}
+
 				if (isalive) {
-					text = WikidataTest.orchestrator(subject).replace("_", " ") + " is a " + nationality + " "
-							+ occupation;
+					if (occupation.trim().equalsIgnoreCase("")) {
+						text = WikidataTest.orchestrator(subject).replace("_", " ") + " is a " + nationality + " "
+								+ "Person.";
+					} else {
+						text = WikidataTest.orchestrator(subject).replace("_", " ") + " is a " + nationality + " "
+								+ occupation + ".";
+					}
 
 				} else {
 					text = WikidataTest.orchestrator(subject).replace("_", " ") + " was a " + nationality + " "
-							+ occupation;
+							+ occupation+".";
 					isalive = false;
 				}
 
@@ -118,7 +128,7 @@ public class WikidataVerbalizer {
 	public boolean isAlive(String subject) {
 		boolean b = true;
 		try {
-			if(!WikidataTest.getdeathDate(subject).equalsIgnoreCase("")){
+			if (!WikidataTest.getdeathDate(subject).equalsIgnoreCase("")) {
 				b = false;
 			}
 		} catch (RepositoryException e) {

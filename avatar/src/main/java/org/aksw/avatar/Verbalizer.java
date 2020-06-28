@@ -899,7 +899,10 @@ public class Verbalizer {
 		String ret = "";
 		try {
 			String q;
-			q = "SELECT ?s where {  ?s  ?o <"+cls.toStringID()+">.} LIMIT 10";
+			q = "SELECT ?s where {{ <"+individual.toStringID()+"> <http://dbpedia.org/ontology/spouse> ?s. } "
+					+ "UNION { <"+individual.toStringID()+"> <http://dbpedia.org/property/children> ?s. } "
+							+ "UNION { <"+individual.toStringID()+"> <http://dbpedia.org/ontology/relative> ?s. }"
+					+ " UNION  { ?s ?o <"+cls.toStringID()+">.} } LIMIT 10";
 			QueryExecution qe = qef.createQueryExecution(q);
 			ResultSet results = qe.execSelect();
 			while (results.hasNext()) {

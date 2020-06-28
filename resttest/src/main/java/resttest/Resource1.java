@@ -99,6 +99,35 @@ public class Resource1 {
 
     }
     
+    @Path("/getPronunciation")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getPronunciation(@QueryParam("Subject")String subjectidentifier){
+
+    	String subjectinput="";
+    	if(!(subjectidentifier == null)) {
+    		subjectinput=subjectidentifier;
+    	}
+
+        //compute summarization of the entity and verbalize it
+        String audio = "";
+		try {
+			audio = WikidataTest.getPronunciation(subjectinput);
+		} catch (RepositoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (QueryEvaluationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        return audio;
+
+    }
+    
     @Path("/getThumnail")
     @GET
     @Produces(MediaType.TEXT_PLAIN)

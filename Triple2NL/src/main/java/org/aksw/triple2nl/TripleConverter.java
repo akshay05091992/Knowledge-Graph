@@ -346,7 +346,7 @@ public class TripleConverter {
 
 		for (SPhraseSpec s : sentenseclause) {
 			System.out.println(realiser.realiseSentence(s));
-			text += realiser.realiseSentence(s);
+			text += " "+realiser.realiseSentence(s);
 		}
 
 		return text;
