@@ -28,7 +28,10 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
@@ -644,6 +647,34 @@ public class TripleConverter {
 	public SPhraseSpec convertToPhrase(Triple t, boolean negated) {
 		return convertToPhrase(t, negated, false);
 	}
+	
+	public String getinfo(Triple t) {
+		org.apache.jena.graph.Node subject = t.getSubject();
+		org.apache.jena.graph.Node predicate = t.getPredicate();
+		org.apache.jena.graph.Node object = t.getObject();
+		String service = "http://dbpedia.org/sparql";
+		String Object="";
+		try {
+			String q;
+			String pred=predicate.toString().replace("@", "");
+			q = "SELECT ?o where { <" + subject.toString() + "> <"+pred+"> ?o.}";
+			QueryExecution qe = org.apache.jena.query.QueryExecutionFactory.sparqlService(service, q);
+			ResultSet results = qe.execSelect();
+			while (results.hasNext()) {
+				RDFNode node = results.next().get("o");
+				Object=node.toString().replace("^^http://www.w3.org/2001/XMLSchema#date", "");
+				
+				//TODO
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return Object;
+	}
 
 	/**
 	 * Convert a triple into a phrase object
@@ -659,11 +690,15 @@ public class TripleConverter {
 	 */
 	public SPhraseSpec convertToPhrase(Triple t, boolean negated, boolean reverse) {
 		logger.debug("Verbalizing triple " + t);
+		System.out.println("Verbalizing triple " + t);
 		SPhraseSpec p = nlgFactory.createClause();
 
 		Node subject = t.getSubject();
 		Node predicate = t.getPredicate();
 		Node object = t.getObject();
+		if(object.toString().equals("http://dbpedia.org/resource/")) {
+			object=NodeFactory.createURI(getinfo(t));
+		}
 
 		// process predicate
 		// start with variables
@@ -967,6 +1002,7 @@ public class TripleConverter {
 
 	public NPPhraseSpec processResourceNode(Node node) {
 		// get string from URI
+		System.out.println("Node is "+node);
 		String s = uriConverter.convert(node.getURI());
 
 		// create word

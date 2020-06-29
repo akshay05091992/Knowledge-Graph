@@ -530,7 +530,11 @@ public class Verbalizer {
 		
 		 g=getGender(resource,namedClass);
 		}
-
+		
+		if(g==null) {
+			g=Gender.UNKNOWN;
+		}
+		//System.out.println("Gender is"+g);
 		// get a list of possible subject replacements
 		
 		List<NPPhraseSpec> subjects = generateSubjects(resource, namedClass, g);
@@ -1066,6 +1070,8 @@ public class Verbalizer {
 		return "";
 	}
 	
+	
+	
 
 	public String getNationality(OWLIndividual individual, OWLClass cls) {
 		try {
@@ -1193,11 +1199,15 @@ public class Verbalizer {
 		np.addPreModifier("This");
 		result.add(np);
 		// the pronoun depending on the gender of the resource
+		try {
 		if (resourceGender.equals(Gender.MALE)) {
 			result.add(nlg.nlgFactory.createNounPhrase("he"));
 		} else if (resourceGender.equals(Gender.FEMALE)) {
 			result.add(nlg.nlgFactory.createNounPhrase("she"));
 		} else {
+			result.add(nlg.nlgFactory.createNounPhrase("it"));
+		}
+		}catch(Exception e) {
 			result.add(nlg.nlgFactory.createNounPhrase("it"));
 		}
 		return result;
@@ -1275,6 +1285,7 @@ public class Verbalizer {
 			return phrase;
 		}
 		int index = (int) Math.floor(Math.random() * subjects.size());
+		
 		// index = 2;
 
 		// possessive as specifier of the NP
@@ -1289,7 +1300,6 @@ public class Verbalizer {
 			NPPhraseSpec newSpecifier = nlg.nlgFactory.createNounPhrase(subjects.get(index));
 			newSpecifier.setFeature(Feature.POSSESSIVE, true);
 			newSubject.setSpecifier(newSpecifier);
-
 			if (index >= subjects.size() - 1) {
 				if (g.equals(Gender.MALE)) {
 					newSpecifier.setFeature(LexicalFeature.GENDER, simplenlg.features.Gender.MASCULINE);
