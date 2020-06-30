@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import org.aksw.avatar.clustering.Node;
 import org.aksw.avatar.clustering.WeightedGraph;
 import org.aksw.avatar.exceptions.NoGraphAvailableException;
+import org.aksw.avatar.gender.Gender;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.apache.log4j.Logger;
@@ -62,6 +63,7 @@ import com.google.common.collect.Sets.SetView;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.RDFNode;
 
 /**
  * @author Lorenz Buehmann
@@ -324,6 +326,8 @@ public class DatasetBasedGraphGenerator {
 					+ "?s a <" + cls.toStringID() + ">."
 					+ " {?p a owl:ObjectProperty.} UNION {?p a owl:DatatypeProperty.} " + "?o ?p ?s." + "} GROUP BY ?p";
 		}
+		System.out.println("Class Link"+cls.toStringID());
+		Gender g=null;
 
 		// split into 2 queries because triple stores sometimes do not answer
 		// the query above
@@ -331,13 +335,48 @@ public class DatasetBasedGraphGenerator {
 				+ "?s a <" + cls.toStringID() + "> ." + "?p a owl:ObjectProperty . " + "?s ?p ?o ." + "} LIMIT 1000";
 
 		if (this.indiv != null) {
+			String subject="<"+this.indiv.toString()+">";
+			try {
+				String q;
+				q = "SELECT ?o where { " + subject + " <http://xmlns.com/foaf/0.1/gender> ?o.}";
+				QueryExecution qe = qef.createQueryExecution(q);
+				ResultSet results = qe.execSelect();
+				while (results.hasNext()) {
+					RDFNode node = results.next().get("o");
+					if(node.toString().equalsIgnoreCase("male@en")) {
+						g=Gender.MALE;
+					}else if (node.toString().equalsIgnoreCase("female@en")) {
+						g=Gender.FEMALE;
+					}else {
+						g=Gender.UNKNOWN;
+					}
+					
+				}
+				
+				
+			}catch (Exception e) {
+				//e.printStackTrace();
+				g=Gender.UNKNOWN;
+			}
+			
+			if(g!=null && !g.equals(Gender.UNKNOWN)) {
 
 			query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
 					+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} " + "<" + this.indiv.toStringID()
 					+ "> ?p ?o.} group by ?p " + "ORDER BY DESC(?cnt)";
+			}else {
+				
+				query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
+		        		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+		         		+ "?s a <" + cls.toStringID() + "> ."
+		         		+ "?p a owl:ObjectProperty . "
+		         		+ "?s ?p ?o ."
+		         		+ "} GROUP BY ?p";
+			}
 		}
 
 		ResultSet rs = executeSelectQuery(query);
+		
 		QuerySolution qs;
 		while (rs.hasNext()) {
 			qs = rs.next();
@@ -356,10 +395,20 @@ public class DatasetBasedGraphGenerator {
 				+ "?s ?p ?o ." + "}  ORDER BY DESC(?p) LIMIT 20 ";
 
 		if (this.indiv != null) {
+			if(g!=null && !g.equals(Gender.UNKNOWN)) {
 
 			query = "SELECT ?p (COUNT(?p) AS ?cnt) where { {?p a owl:ObjectProperty.}"
 					+ " UNION {?p a owl:DataTypeProperty.} UNION {?p a owl:Ontology.} " + "<" + this.indiv.toStringID()
 					+ "> ?p ?o.} group by ?p " + "ORDER BY DESC(?cnt)";
+			}else {
+				
+				query = "PREFIX owl:<http://www.w3.org/2002/07/owl#> "
+		        		+ "SELECT ?p (COUNT(DISTINCT ?s) AS ?cnt) WHERE {"
+		         		+ "?s a <" + cls.toStringID() + "> ."
+		         		+ " ?p a owl:DatatypeProperty . "
+		         		+ "?s ?p ?o ."
+		         		+ "} GROUP BY ?p";
+			}
 		}
 		logger.info(query);
 		rs = executeSelectQuery(query);
