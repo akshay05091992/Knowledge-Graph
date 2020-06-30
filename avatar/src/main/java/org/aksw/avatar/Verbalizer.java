@@ -340,7 +340,8 @@ public class Verbalizer {
 					marker=true;
 				}
 				if(marker) {
-				if (line.startsWith("State") && !((line.replaceAll("State", "")).isEmpty())) {
+					System.out.println(line);
+				if ((line.startsWith("State")||line.startsWith("Sovereign")) && !((line.replaceAll("State", "")).isEmpty())) {
 					//System.out.println("\n"+line);
 					flag = true;
 				}
@@ -410,6 +411,11 @@ public class Verbalizer {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
 					}else if("residence".equals(processnode(p.asNode().toString()))){
+						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
+					}else if ("deathPlace".equals(processnode(p.asNode().toString()))){
 						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
