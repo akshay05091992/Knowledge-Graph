@@ -249,6 +249,7 @@ public class Verbalizer {
 		boolean flag = false;
 		boolean marker=false;
 		boolean marker1=false;
+		try {
 		if(Predicate.equalsIgnoreCase("birthDate")) {
 			marker=true;
 		}
@@ -324,6 +325,9 @@ public class Verbalizer {
 			}
 
 		}
+		}catch(Exception e) {
+			flag=true;
+		}
 
 		return flag;
 	}
@@ -331,6 +335,7 @@ public class Verbalizer {
 	public boolean validatetriples2(String Subject, String Predicate, String Object) {
 		boolean flag = false;
 		boolean marker=false;
+		try {
 		Elements infobox = doc2.select("table[class*=infobox]");
 		if (ListUtil.isNotEmpty(infobox)) {
 			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
@@ -354,6 +359,9 @@ public class Verbalizer {
 			}
 
 		}
+		}catch(Exception e) {
+			flag=true;
+		}
 
 		return flag;
 	}
@@ -362,6 +370,7 @@ public class Verbalizer {
 	
 	public String countryvalidator(String Subject, String Predicate, String Object) {
 		String country="";
+		try {
 		Elements infobox = doc2.select("table[class*=infobox]");
 		if (ListUtil.isNotEmpty(infobox)) {
 			Elements infoboxRows = infobox.get(0).select("tbody").select("tr");
@@ -374,6 +383,9 @@ public class Verbalizer {
 				}
 				
 			}
+		}
+		}catch(Exception e) {
+			
 		}
 		
 		
@@ -393,11 +405,18 @@ public class Verbalizer {
 			q += " LIMIT " + maxShownValuesPerProperty + 1;
 			QueryExecution qe = qef.createQueryExecution(q);
 			ResultSet results = qe.execSelect();
-			getcorpusfromwikipedia(processnodeSubject(r.asNode().toString()));
+			String content=getcorpusfromwikipedia(processnodeSubject(r.asNode().toString()));
+			Boolean flag=false;
+			if(content != "") {
+				flag=true;
+			}
+			if(flag) {
 			validatetriples(processnode(r.asNode().toString()), "", "");
+			}
 			if (results.hasNext()) {
 				while (results.hasNext()) {
 					RDFNode n = results.next().get("o");
+					if(flag) {
 					if ("birthDate".equals(processnode(p.asNode().toString()))
 							&& validatetriples(processnodeSubject(r.asNode().toString()),
 									processnode(p.asNode().toString()), processnodewithdate(n.asNode().toString()))) {
@@ -406,31 +425,64 @@ public class Verbalizer {
 							&& validatetriples(processnodeSubject(r.asNode().toString()),
 									processnode(p.asNode().toString()), processnode(n.asNode().toString()))) {
 						// System.out.println(p.asNode().toString()+"\n");
-						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						String content2=getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						Boolean flag2=false;
+						if(content2 != "") {
+							flag2=true;
+						}
+						if(flag2) {
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
+						}else {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
 					}else if("residence".equals(processnode(p.asNode().toString()))){
-						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						String content2=getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						Boolean flag2=false;
+						if(content2 != "") {
+							flag2=true;
+						}
+						if(flag2) {
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
+						}else {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
 					}else if ("deathPlace".equals(processnode(p.asNode().toString()))){
-						getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						String content2=getcorpusfromwikipedia2(processnode(n.asNode().toString()));
+						Boolean flag2=false;
+						if(content2 != "") {
+							flag2=true;
+						}
+						if(flag2) {
 						if (validatetriples2("", "", processnode(n.asNode().toString()))) {
+							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+						}
+						}else {
 							result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 						}
 					}
 					
 					else if("country".equals(processnode(p.asNode().toString()))){
 						
-						getcorpusfromwikipedia2(processnodeSubject(r.asNode().toString()));
+						String content2=getcorpusfromwikipedia2(processnodeSubject(r.asNode().toString()));
+						Boolean flag2=false;
+						if(content2 != "") {
+							flag2=true;
+						}
+						if(flag2) {
 						String obj=countryvalidator("", "", processnode(n.asNode().toString()));
 						result.add(Triple.create(r.asNode(), p.asNode(), NodeFactory.createURI("http://dbpedia.org/resource/"+obj)));
+						}
 						
 					}
 					else if (!("birthDate".equals(processnode(p.asNode().toString()))
 							|| "birthPlace".equals(processnode(p.asNode().toString())) || "termPeriod".equals(processnode(p.asNode().toString())))) {
+						result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
+					}
+					}else {
 						result.add(Triple.create(r.asNode(), p.asNode(), n.asNode()));
 					}
 				}
@@ -898,7 +950,12 @@ public class Verbalizer {
 			HardeningType hType) {
 		List<NLGElement> elements = verbalize(individual, nc, null, threshold, cooccurrence, hType);
 		String summary = getIntroSentence(individual, nc);
-		summary = summary.concat(". " + realize(elements));
+		if(realize(elements)==null) {
+			summary = summary.concat(".");
+		}else {
+			summary = summary.concat(". " + realize(elements));
+		}
+		
 		summary = summary.replaceAll("\\s?\\((.*?)\\)", "");
 		summary = summary.replace(" , among others,", ", among others,");
 		return summary;
