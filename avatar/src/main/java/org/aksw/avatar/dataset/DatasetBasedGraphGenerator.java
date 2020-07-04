@@ -335,7 +335,8 @@ public class DatasetBasedGraphGenerator {
 				+ "?s a <" + cls.toStringID() + "> ." + "?p a owl:ObjectProperty . " + "?s ?p ?o ." + "} LIMIT 1000";
 
 		if (this.indiv != null) {
-			String subject="<"+this.indiv.toString()+">";
+			String subject=this.indiv.toString();
+			System.out.println("Subject is"+subject);
 			try {
 				String q;
 				q = "SELECT ?o where { " + subject + " <http://xmlns.com/foaf/0.1/gender> ?o.}";
@@ -358,6 +359,7 @@ public class DatasetBasedGraphGenerator {
 				//e.printStackTrace();
 				g=Gender.UNKNOWN;
 			}
+			System.out.println("Gender is"+g);
 			
 			if(g!=null && !g.equals(Gender.UNKNOWN)) {
 
