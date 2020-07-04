@@ -56,10 +56,10 @@ public class WikidataVerbalizer {
 					}
 				}
 
-				if (indexInstance != 0) {
+				if (indexInstance != 0 && indexGender != 0) {
 					input.remove(indexInstance);
 					input.remove(indexGender - 1);
-				} else {
+				} else if(indexInstance != 0 && indexGender == 0) {
 					input.remove(indexGender);
 				}
 				indexGender = 0;

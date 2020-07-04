@@ -54,7 +54,7 @@ public class WikidataTest {
 		String query="";
 		Integer count = 0;
 		Integer count1 = 0;
-		
+		Boolean isFetched = false;
 		
 		if(!predicateIdentifier.isEmpty()) {
 			query = "SELECT  ?Object  WHERE {"
@@ -88,6 +88,9 @@ public class WikidataTest {
 							if(predicate.equals("country_of_citizenship")) {
 								NationalityIdentifier=bs.getValue("Object").toString();
 							}
+							if(predicate.equals("date_of_birth")) {
+								isFetched = true;
+							}
 							if(bs.getValue("Object").toString().contains("<http://www.w3.org/2001/XMLSchema#dateTime>")) {
 								object=bs.getValue("Object").toString().split("T")[0].replace("\"", "");
 								triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral(predicate),NodeFactory.createLiteral(object,XSDDatatype.XSDdate)));
@@ -116,7 +119,7 @@ public class WikidataTest {
 			}
 		}
 		object = getbirthPlace(subjectIdentifier);
-		if(object != null && !object.equalsIgnoreCase("")){
+		if(!isFetched && object != null && !object.equalsIgnoreCase("")){
 			triples.add(Triple.create(NodeFactory.createLiteral(subject), NodeFactory.createLiteral("date_of_birth"), NodeFactory.createLiteral(object.split("T")[0].replace("\"", ""),XSDDatatype.XSDdate)));
 		}
 		object = getdeathDate(subjectIdentifier);
